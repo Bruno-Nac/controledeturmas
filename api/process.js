@@ -6,7 +6,7 @@
 // anyone with the upload password can refresh the live dashboard in seconds.
 
 const fs = require('fs/promises');
-const formidable = require('formidable');
+const { formidable } = require('formidable');
 const XLSX = require('xlsx');
 const { put } = require('@vercel/blob');
 
