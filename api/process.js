@@ -67,7 +67,7 @@ module.exports = async function handler(req, res) {
     const dashboard = buildDashboard({ rawTurmas, matriculas, eventosWorksheet, now: new Date() });
 
     await put('dashboard-data.json', JSON.stringify(dashboard), {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: 'application/json',
