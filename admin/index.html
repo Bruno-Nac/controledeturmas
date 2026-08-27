@@ -1,0 +1,184 @@
+<title>Atualizar dados — Régua de Turmas</title>
+<style>
+  :root {
+    --paper: #f2f4f2; --paper-raised: #ffffff; --paper-sunken: #e9ece9;
+    --ink: #16232c; --ink-soft: #4f5f68; --ink-faint: #7c8991;
+    --line: #d9dedb; --line-strong: #c2c9c4;
+    --accent: #1f4b4a; --accent-strong: #163534; --accent-soft: #e2ece9; --accent-ink: #ffffff;
+    --status-futura: #21714f; --status-futura-soft: #e0efe6;
+    --status-andamento: #a5690a; --status-andamento-soft: #f5e9d4;
+    --shadow: 0 1px 2px rgba(22, 35, 44, 0.06), 0 8px 24px -12px rgba(22, 35, 44, 0.18);
+    --radius: 10px;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #10171a; --paper-raised: #172023; --paper-sunken: #0c1214;
+      --ink: #e7ece9; --ink-soft: #a7b3ae; --ink-faint: #77857f;
+      --line: #2a3538; --line-strong: #3a4649;
+      --accent: #56a99a; --accent-strong: #7bc2b3; --accent-soft: #17302c; --accent-ink: #0c1614;
+      --status-futura: #4fae7f; --status-futura-soft: #17301f;
+      --status-andamento: #d3a04a; --status-andamento-soft: #332711;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans);
+    font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .app { max-width: 620px; margin: 0 auto; padding: 40px 24px 80px; display: flex; flex-direction: column; gap: 22px; }
+  h1 { font-family: var(--serif); font-size: 24px; font-weight: 600; margin: 0 0 4px; }
+  .subtitle { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+  .card {
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 16px;
+  }
+  label { font-size: 13px; font-weight: 600; color: var(--ink-soft); display: block; margin-bottom: 6px; }
+  input[type="password"], input[type="file"] {
+    width: 100%; border: 1px solid var(--line); background: var(--paper-sunken); color: var(--ink);
+    border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: var(--sans);
+  }
+  .field { display: flex; flex-direction: column; }
+  .dropzone {
+    border: 1.5px dashed var(--line-strong); border-radius: 8px; padding: 16px;
+    background: var(--paper-sunken); font-size: 13px; color: var(--ink-soft); text-align: center;
+    transition: border-color .12s ease, background .12s ease;
+  }
+  .dropzone.is-over { border-color: var(--accent); background: var(--accent-soft); }
+  .dropzone strong { color: var(--ink); }
+  .file-name { font-size: 12.5px; color: var(--accent-strong); margin-top: 6px; font-weight: 600; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    border-radius: 8px; border: none; padding: 12px 18px; font-size: 14px; font-weight: 600;
+    cursor: pointer; background: var(--accent); color: var(--accent-ink);
+  }
+  .btn:hover { background: var(--accent-strong); }
+  .btn[disabled] { opacity: .55; cursor: default; }
+  .result { border-radius: 8px; padding: 14px 16px; font-size: 13.5px; display: none; flex-direction: column; gap: 6px; }
+  .result.is-visible { display: flex; }
+  .result.ok { background: var(--status-futura-soft); color: var(--status-futura); }
+  .result.err { background: var(--status-andamento-soft); color: var(--status-andamento); }
+  .result dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 4px 0 0; font-size: 13px; color: var(--ink); }
+  .result dt { color: var(--ink-faint); }
+  .result dd { margin: 0; font-weight: 600; }
+  a.back { font-size: 13px; color: var(--ink-soft); }
+</style>
+
+<div class="app">
+  <div>
+    <h1>Atualizar dados do painel</h1>
+    <p class="subtitle">Baixe as duas planilhas mais recentes do SharePoint e envie aqui — o painel é atualizado na hora, sem precisar de ninguém rodar nada.</p>
+  </div>
+
+  <form class="card" id="upload-form">
+    <div class="field">
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+
+    <div class="field">
+      <label for="cronograma">Cronograma 2026 - Turmas.xlsx</label>
+      <div class="dropzone" id="drop-cronograma">
+        <div>Arraste o arquivo aqui ou <strong>clique para escolher</strong></div>
+        <input type="file" id="cronograma" name="cronograma" accept=".xlsx" required style="margin-top:10px;">
+        <div class="file-name" id="name-cronograma"></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="matriculas">Planilha_Master_Controle_Alunos_2026.xlsx</label>
+      <div class="dropzone" id="drop-matriculas">
+        <div>Arraste o arquivo aqui ou <strong>clique para escolher</strong></div>
+        <input type="file" id="matriculas" name="matriculas" accept=".xlsx" required style="margin-top:10px;">
+        <div class="file-name" id="name-matriculas"></div>
+      </div>
+    </div>
+
+    <button class="btn" type="submit" id="submit-btn">Processar e atualizar painel</button>
+
+    <div class="result" id="result"></div>
+  </form>
+
+  <a class="back" href="/">&larr; Voltar para o painel</a>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  function wireFileInput(inputId, nameId) {
+    var input = document.getElementById(inputId);
+    var nameEl = document.getElementById(nameId);
+    input.addEventListener("change", function () {
+      nameEl.textContent = input.files[0] ? input.files[0].name : "";
+    });
+  }
+  wireFileInput("cronograma", "name-cronograma");
+  wireFileInput("matriculas", "name-matriculas");
+
+  var STATUS_LABEL = { futura: "Futura", andamento: "Em andamento", concluida: "Concluída" };
+
+  var form = document.getElementById("upload-form");
+  var resultEl = document.getElementById("result");
+  var submitBtn = document.getElementById("submit-btn");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Processando…";
+    resultEl.className = "result";
+    resultEl.innerHTML = "";
+
+    var fd = new FormData(form);
+
+    fetch("/api/process", { method: "POST", body: fd })
+      .then(function (r) { return r.json().then(function (body) { return { ok: r.ok, body: body }; }); })
+      .then(function (res) {
+        if (!res.ok) {
+          resultEl.className = "result err is-visible";
+          resultEl.textContent = "Erro: " + (res.body.message || res.body.error || "falha desconhecida");
+          return;
+        }
+        var b = res.body;
+        var statusLines = Object.keys(b.status).map(function (k) {
+          return "<dt>" + (STATUS_LABEL[k] || k) + "</dt><dd>" + b.status[k] + "</dd>";
+        }).join("");
+        resultEl.className = "result ok is-visible";
+        resultEl.innerHTML =
+          "<strong>Painel atualizado com sucesso.</strong>" +
+          "<dl><dt>Total de turmas</dt><dd>" + b.total_turmas + "</dd>" +
+          statusLines +
+          "<dt>Encontros programados</dt><dd>" + b.eventos + "</dd></dl>" +
+          (b.parse_errors && b.parse_errors.length ? "<div style=\"margin-top:6px;\">Avisos: " + b.parse_errors.join("; ") + "</div>" : "");
+      })
+      .catch(function (err) {
+        resultEl.className = "result err is-visible";
+        resultEl.textContent = "Erro de rede: " + err.message;
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Processar e atualizar painel";
+      });
+  });
+
+  [["drop-cronograma", "cronograma", "name-cronograma"], ["drop-matriculas", "matriculas", "name-matriculas"]].forEach(function (cfg) {
+    var zone = document.getElementById(cfg[0]);
+    var input = document.getElementById(cfg[1]);
+    var nameEl = document.getElementById(cfg[2]);
+    zone.addEventListener("click", function (e) { if (e.target !== input) input.click(); });
+    zone.addEventListener("dragover", function (e) { e.preventDefault(); zone.classList.add("is-over"); });
+    zone.addEventListener("dragleave", function () { zone.classList.remove("is-over"); });
+    zone.addEventListener("drop", function (e) {
+      e.preventDefault();
+      zone.classList.remove("is-over");
+      if (e.dataTransfer.files[0]) {
+        input.files = e.dataTransfer.files;
+        nameEl.textContent = e.dataTransfer.files[0].name;
+      }
+    });
+  });
+})();
+</script>

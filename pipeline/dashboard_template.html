@@ -133,28 +133,6 @@
   }
   .topbar__meta strong { color: var(--ink); font-weight: 600; }
 
-  .sync-pill {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--paper-raised);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 7px 14px 7px 10px;
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    box-shadow: var(--shadow);
-  }
-  .sync-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 0 3px var(--gold-soft);
-    flex: none;
-  }
-  .sync-pill button {
-    background: none; border: none; padding: 0;
-    color: var(--accent-strong); font-weight: 600; cursor: pointer;
-    text-decoration: underline; text-underline-offset: 2px;
-  }
-
   /* ---------- KPIs ---------- */
   .kpis {
     display: grid;
@@ -526,10 +504,6 @@
         <p class="topbar__meta">Board Academy · captura de <strong id="snapshot-date">—</strong></p>
       </div>
     </div>
-    <div class="sync-pill">
-      <span class="sync-dot"></span>
-      <span>Atualização manual — <button id="sync-info-btn" type="button">como ativar ao vivo</button></span>
-    </div>
   </header>
 
   <section class="kpis" id="kpis"></section>
@@ -879,10 +853,6 @@
     clearTimeout(searchTimer);
     var v = e.target.value;
     searchTimer = setTimeout(function () { state.query = v; render(); }, 120);
-  });
-
-  document.getElementById("sync-info-btn").addEventListener("click", function () {
-    showToast("Para atualização ao vivo, conecte o SharePoint/OneDrive em claude.ai → Configurações → Conectores e avise para eu ligar o painel a ele.");
   });
 
   var toastTimer;
