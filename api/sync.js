@@ -2,18 +2,19 @@
 
 // Automatic refresh: pulls the three source workbooks from Microsoft 365 and
 // republishes the dashboard, with nobody uploading anything. Triggered by the
-// Vercel cron in vercel.json (which sends "Authorization: Bearer
-// $CRON_SECRET"), or by hand / any external scheduler with the same secret or
-// the /admin password in the x-admin-password header.
+// hourly GitHub Actions workflow and the daily Vercel cron (both send
+// "Authorization: Bearer $CRON_SECRET"), or by hand with the /admin password in
+// x-admin-password (the "Atualizar dados agora" button in the Gestão view asks
+// for it).
 
 const { fetchSources, missingEnv } = require('../lib/graphSource');
 const { runPipeline, summarize } = require('../lib/pipeline');
+const { adminAutorizado } = require('../lib/access');
 
 function authorized(req) {
   const bearer = req.headers.authorization;
   if (process.env.CRON_SECRET && bearer === `Bearer ${process.env.CRON_SECRET}`) return true;
-  const pw = req.headers['x-admin-password'];
-  return typeof pw === 'string' && pw.length > 0 && pw === process.env.UPLOAD_PASSWORD;
+  return adminAutorizado(req);
 }
 
 module.exports = async function handler(req, res) {

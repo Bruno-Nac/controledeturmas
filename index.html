@@ -681,6 +681,86 @@
   }
   .toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* ---------- Página de abertura e barra do usuário ---------- */
+  body.is-locked .app { display: none; }
+  .landing {
+    position: fixed; inset: 0; z-index: 200; background: var(--paper); overflow-y: auto;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 30px; padding: 32px 20px;
+  }
+  .landing__top { position: absolute; top: 16px; right: 16px; }
+  .landing__brand { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .landing__brand img { width: 66px; height: auto; }
+  .landing__brand h1 { font-family: var(--serif); font-size: 36px; font-weight: 600; margin: 0; letter-spacing: 0.2px; }
+  .landing__brand p { margin: 0; color: var(--gold); font-weight: 700; letter-spacing: 0.3px; font-size: 14px; }
+  .landing__choices { display: grid; grid-template-columns: repeat(2, minmax(230px, 310px)); gap: 20px; }
+  .choice {
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px;
+    padding: 26px 24px; display: flex; flex-direction: column; gap: 10px; text-align: left;
+    cursor: pointer; box-shadow: var(--shadow); transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+  .choice:hover:not([disabled]) { transform: translateY(-3px); border-color: var(--gold); }
+  .choice[disabled] { opacity: 0.6; cursor: default; }
+  .choice__icon {
+    width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: var(--accent-soft); color: var(--accent-strong);
+  }
+  .choice--gestao .choice__icon { background: var(--gold-soft); color: var(--gold); }
+  .choice__icon svg { width: 24px; height: 24px; }
+  .choice h2 { font-family: var(--serif); font-size: 24px; font-weight: 600; margin: 4px 0 0; }
+  .choice p { margin: 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+  .choice__go { margin-top: auto; padding-top: 8px; font-weight: 700; font-size: 13px; color: var(--accent-strong); }
+  .choice--gestao .choice__go { color: var(--gold); }
+  .landing__erro { margin: 0; min-height: 18px; color: var(--nivel-risco); font-size: 13px; text-align: center; }
+  .landing__foot { margin: 0; font-size: 12px; color: var(--ink-faint); }
+  @media (max-width: 640px) {
+    .landing__choices { grid-template-columns: 1fr; width: 100%; max-width: 380px; }
+    .landing__brand h1 { font-size: 30px; }
+  }
+  .userbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .userchip {
+    font-size: 12.5px; color: var(--ink-soft); padding: 7px 13px; border: 1px solid var(--line);
+    border-radius: 999px; background: var(--paper-raised);
+  }
+  .userchip b { color: var(--ink); }
+  .pill-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink);
+    font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .pill-btn:hover { border-color: var(--line-strong); background: var(--paper-sunken); }
+  .pill-btn[disabled] { opacity: 0.6; cursor: default; }
+
+  /* ---------- Gráfico de linha (comparação turma a turma) ---------- */
+  .cmp-chart { overflow: visible; }
+  .cdot { stroke-width: 2.2; cursor: pointer; }
+  .cdot--risco { fill: var(--nivel-risco); stroke: var(--nivel-risco); }
+  .cdot--atencao { fill: var(--nivel-atencao); stroke: var(--nivel-atencao); }
+  .cdot--saudavel { fill: var(--nivel-saudavel); stroke: var(--nivel-saudavel); }
+  .cdot--lotado { fill: var(--nivel-lotado); stroke: var(--nivel-lotado); }
+  .cdot--none { fill: var(--ink-faint); stroke: var(--ink-faint); }
+  .cdot.is-futura { fill: var(--paper-raised); }
+  .cdot:hover { stroke-width: 4; }
+  .chart-sep { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 4; }
+  .chart-text--sub { font-size: 10px; opacity: 0.85; }
+  .chart-hint { font-size: 12px; color: var(--ink-faint); margin: 0; }
+  .legend .l-line { width: 22px; height: 0; border-top: 2.4px solid var(--accent-strong); border-radius: 0; background: none; }
+  .legend .l-min { width: 22px; height: 0; border-top: 2px dashed var(--nivel-risco); border-radius: 0; background: none; }
+  .legend .l-max { width: 22px; height: 0; border-top: 2px dashed var(--nivel-lotado); border-radius: 0; background: none; }
+  .legend .l-hollow { background: var(--paper-raised); border: 2px solid var(--ink-faint); box-sizing: border-box; }
+
+  .stack { display: flex; height: 28px; border-radius: 8px; overflow: hidden; background: var(--paper-sunken); }
+  .stack__seg { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--paper-raised); min-width: 0; }
+  .stack__seg--risco { background: var(--nivel-risco); }
+  .stack__seg--atencao { background: var(--nivel-atencao); }
+  .stack__seg--saudavel { background: var(--nivel-saudavel); }
+  .stack__seg--lotado { background: var(--nivel-lotado); }
+  .an-filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .prio { font-weight: 700; font-size: 12.5px; }
+  .prio--alta { color: var(--nivel-risco); }
+  .prio--media { color: var(--nivel-atencao); }
+  .prio--baixa { color: var(--nivel-saudavel); }
+
   @media (max-width: 880px) {
     .kpis { grid-template-columns: repeat(2, 1fr); }
     .panel { width: 100%; }
@@ -706,6 +786,37 @@
 </script>
 </head>
 <body>
+<div class="landing" id="landing" hidden>
+  <div class="landing__top">
+    <button class="theme-toggle" type="button" data-mode="light" aria-label="Mudar para o modo escuro">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <span class="theme-label">Modo escuro</span>
+    </button>
+  </div>
+  <div class="landing__brand">
+    <img src="/logo-b.png" alt="Board Academy">
+    <h1>Painel de Turmas</h1>
+    <p>Inteligência Comercial · Board Academy</p>
+  </div>
+  <div class="landing__choices">
+    <button type="button" class="choice" data-perfil="usuario">
+      <span class="choice__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+      <h2>Usuário</h2>
+      <p>Calendário das turmas, aulas e a lista de quais turmas priorizar na venda. Sem números de inscritos.</p>
+      <span class="choice__go">Entrar como usuário →</span>
+    </button>
+    <button type="button" class="choice choice--gestao" data-perfil="gestao">
+      <span class="choice__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
+      <h2>Gestão</h2>
+      <p>Visão completa: inscritos e máximo de cada turma, ocupação semana a semana e análise comparativa das turmas.</p>
+      <span class="choice__go">Entrar na gestão →</span>
+    </button>
+  </div>
+  <p class="landing__erro" id="landing-erro" role="alert"></p>
+  <p class="landing__foot">Inteligência Comercial · Board Academy</p>
+</div>
+
 <div class="app">
   <header class="topbar">
     <div class="topbar__title">
@@ -715,25 +826,28 @@
         <p class="topbar__meta"><span class="topbar__brand">Inteligência Comercial</span> · Board Academy · captura de <strong id="snapshot-date">—</strong></p>
       </div>
     </div>
-    <button class="theme-toggle" id="theme-toggle" type="button" data-mode="light" aria-label="Mudar para o modo escuro">
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-      <span id="theme-toggle-label">Modo escuro</span>
-    </button>
+    <div class="userbar">
+      <span class="userchip" id="userchip" hidden></span>
+      <button class="pill-btn" id="refresh-btn" type="button" hidden>Atualizar dados agora</button>
+      <button class="pill-btn" id="switch-btn" type="button">Trocar de visão</button>
+      <button class="theme-toggle" id="theme-toggle" type="button" data-mode="light" aria-label="Mudar para o modo escuro">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <span class="theme-label">Modo escuro</span>
+      </button>
+    </div>
   </header>
 
-  <nav class="viewbar" id="view-tabs" role="tablist" aria-label="Seções">
-    <button role="tab" data-view="regua" aria-selected="true" type="button">Turmas</button>
-    <button role="tab" data-view="ocupacao" aria-selected="false" type="button">Ocupação</button>
-    <button role="tab" data-view="analise" aria-selected="false" type="button">Análise de turmas</button>
-  </nav>
+  <nav class="viewbar" id="view-tabs" role="tablist" aria-label="Seções"></nav>
 
   <!-- ================= Turmas ================= -->
   <div class="view" id="view-regua">
     <p class="section-label">Visão geral — clique para filtrar</p>
     <section class="kpis" id="kpis"></section>
-    <p class="section-label">Situação das inscrições (turmas ativas e futuras)</p>
-    <section class="kpis" id="kpis-nivel"></section>
+    <div class="view" id="nivel-block" style="gap:12px">
+      <p class="section-label">Situação das inscrições (turmas ativas e futuras)</p>
+      <section class="kpis" id="kpis-nivel"></section>
+    </div>
     <div class="filter-chip" id="filter-chip" hidden>
       <span id="filter-chip-label"></span>
       <button type="button" id="filter-chip-clear">Limpar filtro</button>
@@ -760,6 +874,11 @@
       </div>
       <div id="comunidades-list"></div>
     </section>
+  </div>
+
+  <!-- ================= Dados por turma (prioridades) ================= -->
+  <div class="view" id="view-prioridades" hidden>
+    <div id="prioridades-root"></div>
   </div>
 
   <!-- ================= Ocupação ================= -->
@@ -815,8 +934,7 @@
   // ======================================================================
   (function () {
     var root = document.documentElement;
-    var btn = document.getElementById("theme-toggle");
-    var label = document.getElementById("theme-toggle-label");
+    var botoes = document.querySelectorAll(".theme-toggle");
     var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
     function effective() {
       var t = root.getAttribute("data-theme");
@@ -825,15 +943,20 @@
     }
     function render() {
       var dark = effective() === "dark";
-      btn.setAttribute("data-mode", dark ? "dark" : "light");
-      label.textContent = dark ? "Modo claro" : "Modo escuro";
-      btn.setAttribute("aria-label", dark ? "Mudar para o modo claro" : "Mudar para o modo escuro");
+      Array.prototype.forEach.call(botoes, function (btn) {
+        btn.setAttribute("data-mode", dark ? "dark" : "light");
+        var rotulo = btn.querySelector(".theme-label");
+        if (rotulo) rotulo.textContent = dark ? "Modo claro" : "Modo escuro";
+        btn.setAttribute("aria-label", dark ? "Mudar para o modo claro" : "Mudar para o modo escuro");
+      });
     }
-    btn.addEventListener("click", function () {
-      var next = effective() === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      try { localStorage.setItem("regua-theme", next); } catch (e) {}
-      render();
+    Array.prototype.forEach.call(botoes, function (btn) {
+      btn.addEventListener("click", function () {
+        var next = effective() === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("regua-theme", next); } catch (e) {}
+        render();
+      });
     });
     if (mq && mq.addEventListener) mq.addEventListener("change", render);
     render();
@@ -855,8 +978,14 @@
     view: "regua",
     statusTab: "ativas", programa: "todos", query: "", kpi: null, collapsed: {},
     oc: { nivel: null, programa: "todos", sortKey: "inicio", sortDir: 1, turma: null },
-    an: { programa: "todos", status: "todas", ordem: "data", semDados: false }
+    an: { programa: "todos", status: "todas", metrica: "alunos" },
+    pr: { nivel: null, programa: "todos" }
   };
+
+  // Quem está usando: { papel: "gestor" | "consulta", usuario }. O perfil
+  // "consulta" nunca recebe números de inscritos do servidor.
+  var ACESSO = { papel: "gestor", usuario: "" };
+  function isGestor() { return ACESSO && ACESSO.papel === "gestor"; }
 
   function escapeHTML(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -903,9 +1032,11 @@
     if (isNum(min) && atual <= min) return "risco";
     return atual / ideal >= 0.75 ? "saudavel" : "atencao";
   }
+  // Gestor: calculado dos números. Consulta: o servidor já manda só o nível.
   function nivelOf(t) {
     var m = t.matriculas;
-    return m ? nivelOcupacao(m.min, m.max, m.atual) : null;
+    if (m) return nivelOcupacao(m.min, m.max, m.atual);
+    return t.nivel === undefined ? null : t.nivel;
   }
   function ocupPct(t) {
     var m = t.matriculas;
@@ -950,12 +1081,32 @@
   // ======================================================================
   // Navegação entre seções
   // ======================================================================
-  var VIEWS = ["regua", "ocupacao", "analise"];
-  function setView(v, skipHash) {
-    if (VIEWS.indexOf(v) === -1) v = "regua";
+  var VIEW_DEFS = [
+    { id: "regua", label: "Turmas", papeis: ["gestor", "consulta"] },
+    { id: "prioridades", label: "Dados por turma", papeis: ["gestor", "consulta"] },
+    { id: "ocupacao", label: "Ocupação", papeis: ["gestor"] },
+    { id: "analise", label: "Análise de turmas", papeis: ["gestor"] }
+  ];
+  function allowedViews() {
+    var papel = ACESSO ? ACESSO.papel : "consulta";
+    return VIEW_DEFS.filter(function (v) { return v.papeis.indexOf(papel) !== -1; }).map(function (v) { return v.id; });
+  }
+  function renderViewTabs() {
+    var ok = allowedViews();
+    document.getElementById("view-tabs").innerHTML = VIEW_DEFS.filter(function (v) { return ok.indexOf(v.id) !== -1; }).map(function (v) {
+      return '<button role="tab" data-view="' + v.id + '" aria-selected="' + (state.view === v.id) + '" type="button">' + v.label + '</button>';
+    }).join("");
+  }
+  document.getElementById("view-tabs").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button[data-view]") : null;
+    if (b) setView(b.getAttribute("data-view"));
+  });
+  function setView(v, skipHash, keepScroll) {
+    var ok = allowedViews();
+    if (ok.indexOf(v) === -1) v = "regua";
     state.view = v;
-    VIEWS.forEach(function (name) {
-      document.getElementById("view-" + name).hidden = name !== v;
+    VIEW_DEFS.forEach(function (d) {
+      document.getElementById("view-" + d.id).hidden = d.id !== v;
     });
     Array.prototype.forEach.call(document.querySelectorAll("#view-tabs button"), function (b) {
       b.setAttribute("aria-selected", String(b.getAttribute("data-view") === v));
@@ -963,13 +1114,11 @@
     if (!skipHash) {
       try { history.replaceState(null, "", "#" + v); } catch (e) {}
     }
+    if (v === "prioridades") renderPrioridades();
     if (v === "ocupacao") renderOcupacao();
     if (v === "analise") renderAnalise();
-    window.scrollTo(0, 0);
+    if (!keepScroll) window.scrollTo(0, 0);
   }
-  Array.prototype.forEach.call(document.querySelectorAll("#view-tabs button"), function (b) {
-    b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
-  });
 
   // ======================================================================
   // Turmas: filtros, KPIs, cards
@@ -1044,11 +1193,14 @@
     document.getElementById("kpis").innerHTML =
       kpiButton("ativas", ativas.length, "Turmas ativas/futuras", "kpi--accent", "", defaultAtivas) +
       kpiButton("andamento", andamento.length, "Em andamento agora", "", "", k === "andamento") +
-      kpiButton("abaixo", abaixo.length, "Abaixo do mínimo de alunos", "kpi--warn", "", k === "abaixo") +
+      (isGestor() ? kpiButton("abaixo", abaixo.length, "Abaixo do mínimo de alunos", "kpi--warn", "", k === "abaixo") : "") +
       kpiButton("eventos", DATA.eventos_comunidades.length, "Encontros programados", "kpi--gold", "ver encontros ↓", false) +
       kpiButton("programas", programs().length, "Programas monitorados", "", "escolher programa", false) +
       kpiButton("proxima", prox ? fmtDateBR(prox) : "—", "Próxima aula", "", "", k === "proxima");
 
+    // A situação das inscrições (risco/atenção/...) é análise: só o gestor vê aqui.
+    // O perfil de consulta vê essa classificação na aba "Dados por turma".
+    document.getElementById("nivel-block").hidden = !isGestor();
     var cont = { risco: 0, atencao: 0, saudavel: 0, lotado: 0 }, semDados = 0;
     ativas.forEach(function (t) {
       var n = nivelOf(t);
@@ -1134,6 +1286,7 @@
   }
 
   function enrollHTML(t) {
+    if (!isGestor()) return ""; // perfil de consulta: sem números de inscritos
     var m = t.matriculas;
     if (!m || !isNum(m.atual) && !isNum(m.max)) {
       return isAtiva(t) ? '<div class="enroll-empty">Inscritos: sem dados no controle de matrículas</div>' : "";
@@ -1158,7 +1311,7 @@
 
   function cardHTML(t) {
     var statusLabel = STATUS_LABEL[t.status] || t.status;
-    var nivel = nivelOf(t);
+    var nivel = isGestor() ? nivelOf(t) : null;
     var range = t.data_inicio ? (fmtDateBR(t.data_inicio) + (t.data_fim && t.data_fim !== t.data_inicio ? " – " + fmtDateBR(t.data_fim) : "")) : "datas a definir";
     return (
       '<button class="card' + (nivel ? ' card--' + nivel : '') + '" data-id="' + escapeHTML(t.id) + '">' +
@@ -1253,12 +1406,15 @@
   // ======================================================================
   // Gráficos (SVG sem bibliotecas)
   // ======================================================================
+  // Menor teto "redondo" >= v e sempre múltiplo de 4, porque os gráficos
+  // desenham 4 divisões e assim os números do eixo saem inteiros (ex.: 60 -> 80).
   function niceCeil(v) {
-    if (v <= 10) return Math.max(5, Math.ceil(v / 5) * 5);
-    var p = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
-    var n = v / p;
-    var step = n <= 1.5 ? 1.5 : n <= 2 ? 2 : n <= 3 ? 3 : n <= 5 ? 5 : 10;
-    return step * p;
+    var seq = [4, 8, 12, 16, 20, 24, 32, 40, 48, 60, 80, 100];
+    for (var p = 1; ; p *= 10) {
+      for (var i = 0; i < seq.length; i++) {
+        if (seq[i] * p >= v) return seq[i] * p;
+      }
+    }
   }
 
   function sparkSVG(serie, w, h) {
@@ -1422,7 +1578,8 @@
       '<dt>Status</dt><dd>' + (STATUS_LABEL[t.status] || t.status) + '</dd>' +
       '<dt>Período</dt><dd>' + range + '</dd>' +
       (t.modalidade ? '<dt>Modalidade</dt><dd>' + escapeHTML(t.modalidade) + '</dd>' : '');
-    document.getElementById("panel-vagas").innerHTML = vagasPanelHTML(t);
+    // Perfil de consulta vê só o calendário da turma, sem inscritos nem análise.
+    document.getElementById("panel-vagas").innerHTML = isGestor() ? vagasPanelHTML(t) : "";
     document.getElementById("panel-aulas").innerHTML = t.aulas.map(function (a) {
       return (
         '<tr>' +
@@ -1583,13 +1740,16 @@
     var notaRisco = (k.em_risco != null && k.em_risco === cont.risco + cont.atencao)
       ? '<div class="note">Na planilha, o indicador "Em risco" (' + k.em_risco + ') soma as turmas em <b>risco</b> (' + cont.risco + ') e em <b>atenção</b> (' + cont.atencao + '). Aqui os dois níveis aparecem separados.</div>' : "";
 
+    var notaTabela = (k.total_turmas != null && k.total_turmas !== PAINEL.turmas.length)
+      ? '<div class="note">Os indicadores do topo vêm direto do painel da planilha (' + k.total_turmas + ' turmas do semestre). A tabela abaixo lista todas as ' + PAINEL.turmas.length + ' turmas da aba EVOLUÇÃO, inclusive as que ainda não começaram — por isso as contagens por situação podem ser maiores.</div>' : "";
+
     root.innerHTML =
       '<div class="box"><div class="box__head"><div><h2>Painel de Ocupação de Turmas</h2>' +
         '<p class="box__sub">Semana vigente: <b>' + semana + '</b> · fonte: planilha Ocupação de Turmas (abas DASH e EVOLUÇÃO)</p></div></div>' +
         '<div class="kpis">' + kpiPlan.join("") + '</div></div>' +
       '<p class="section-label">Situação das turmas — clique para filtrar a tabela</p>' +
       '<div class="kpis">' + niveisHTML + '</div>' +
-      notaRisco +
+      notaRisco + notaTabela +
       '<div class="box"><div class="box__head"><div><h2>Status por turma — semana vigente</h2>' +
         '<p class="box__sub">Clique no cabeçalho para ordenar e numa linha para abrir a turma.</p></div>' +
         '<div class="row-controls"><select class="select" id="oc-programa" aria-label="Filtrar por programa">' + progOpts + '</select>' +
@@ -1631,6 +1791,81 @@
   });
 
   // ======================================================================
+  // Dados por turma — quais turmas priorizar (só a situação, sem números)
+  // ======================================================================
+  var PRIORIDADE = { risco: ["Alta", "alta"], atencao: ["Média", "media"], saudavel: ["Baixa", "baixa"], lotado: ["—", ""] };
+  var PR_ORDEM = ["risco", "atencao", "saudavel", "lotado", "sem"];
+
+  function renderPrioridades() {
+    var root = document.getElementById("prioridades-root");
+    var f = state.pr;
+    var base = DATA.turmas.filter(isAtiva);
+    var cont = { risco: 0, atencao: 0, saudavel: 0, lotado: 0, sem: 0 };
+    base.forEach(function (t) { cont[nivelOf(t) || "sem"]++; });
+
+    var list = base.filter(function (t) {
+      if (f.programa !== "todos" && t.programa !== f.programa) return false;
+      if (f.nivel && (nivelOf(t) || "sem") !== f.nivel) return false;
+      return true;
+    }).sort(function (a, b) {
+      var ia = PR_ORDEM.indexOf(nivelOf(a) || "sem"), ib = PR_ORDEM.indexOf(nivelOf(b) || "sem");
+      if (ia !== ib) return ia - ib;
+      return (a.data_inicio || "9999") < (b.data_inicio || "9999") ? -1 : 1;
+    });
+
+    var cards = NIVEL_ORDER.map(function (n) {
+      return '<button type="button" class="kpi kpi--nivel kpi--' + n + '" data-prnivel="' + n + '" aria-pressed="' + (f.nivel === n) + '">' +
+        '<span class="kpi__value">' + cont[n] + '</span><span class="kpi__label">' + NIVEL_LABEL[n] + '</span>' +
+        '<span class="kpi__hint">prioridade ' + (PRIORIDADE[n][0] === "—" ? "nenhuma" : PRIORIDADE[n][0].toLowerCase()) + '</span></button>';
+    }).join("") +
+      '<button type="button" class="kpi" data-prnivel="sem" aria-pressed="' + (f.nivel === "sem") + '"><span class="kpi__value" style="color:var(--ink-faint)">' + cont.sem + '</span><span class="kpi__label">Sem dados</span><span class="kpi__hint">fora do controle de matrículas</span></button>';
+
+    var progSel = '<option value="todos">Todos os programas</option>' + programs().map(function (p) {
+      return '<option value="' + escapeHTML(p) + '"' + (f.programa === p ? " selected" : "") + '>' + escapeHTML(programLabel(p)) + '</option>';
+    }).join("");
+
+    var rows = list.map(function (t) {
+      var n = nivelOf(t);
+      var pr = n ? PRIORIDADE[n] : ["—", ""];
+      return '<tr class="is-link" data-id="' + escapeHTML(t.id) + '">' +
+        '<td>' + (n ? '<span class="nivel-pill nivel-pill--' + n + '">' + NIVEL_LABEL[n] + '</span>' : '<span class="nivel-pill nivel-pill--none">Sem dados</span>') + '</td>' +
+        '<td><div class="cell-prog">' + escapeHTML(t.turma) + '</div><div class="cell-sub">' + escapeHTML(programLabel(t.programa)) + '</div></td>' +
+        '<td>' + (t.data_inicio ? fmtDateBR(t.data_inicio) : "a definir") + '</td>' +
+        '<td><span class="status-pill status-pill--' + t.status + '">' + (STATUS_LABEL[t.status] || t.status) + '</span></td>' +
+        '<td><span class="prio' + (pr[1] ? " prio--" + pr[1] : "") + '">' + pr[0] + '</span></td></tr>';
+    }).join("");
+
+    root.innerHTML =
+      '<div class="box"><div class="box__head"><div><h2>Dados por turma</h2>' +
+        '<p class="box__sub">Quais turmas priorizar na venda — das que mais precisam de inscritos (em risco) até as que já estão completas (lotadas). Aqui aparece apenas a situação da turma, sem números de alunos.</p></div></div>' +
+        '<div class="kpis">' + cards + '</div></div>' +
+      '<div class="box"><div class="box__head"><div><h2>Turmas ativas e futuras por prioridade</h2>' +
+        '<p class="box__sub">Ordenadas da situação mais crítica para a mais tranquila e, dentro de cada uma, pela data de início. Clique numa linha para ver o calendário da turma.</p></div>' +
+        '<div class="row-controls"><select class="select" id="pr-programa" aria-label="Filtrar por programa">' + progSel + '</select>' +
+        (f.nivel ? '<button type="button" class="btn" id="pr-clear" style="border-color:var(--line)">Limpar filtro</button>' : '') + '</div></div>' +
+        '<div class="legend"><span><i style="background:var(--nivel-risco)"></i>Em risco — prioridade alta</span><span><i style="background:var(--nivel-atencao)"></i>Atenção — prioridade média</span><span><i style="background:var(--nivel-saudavel)"></i>Saudável — prioridade baixa</span><span><i style="background:var(--nivel-lotado)"></i>Lotada — sem ação</span></div>' +
+        '<div class="table-wrap"><table class="data-table"><thead><tr><th>Situação</th><th>Turma</th><th>Início</th><th>Status</th><th>Prioridade</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="5" class="empty-state">Nenhuma turma com esse filtro.</td></tr>') + '</tbody></table></div></div>';
+  }
+
+  document.getElementById("prioridades-root").addEventListener("click", function (e) {
+    var t = e.target;
+    var kb = t.closest ? t.closest("button[data-prnivel]") : null;
+    if (kb) {
+      var n = kb.getAttribute("data-prnivel");
+      state.pr.nivel = state.pr.nivel === n ? null : n;
+      renderPrioridades();
+      return;
+    }
+    if (t.id === "pr-clear") { state.pr.nivel = null; renderPrioridades(); return; }
+    var tr = t.closest ? t.closest("tr[data-id]") : null;
+    if (tr) openPanel(tr.getAttribute("data-id"));
+  });
+  document.getElementById("prioridades-root").addEventListener("change", function (e) {
+    if (e.target.id === "pr-programa") { state.pr.programa = e.target.value; renderPrioridades(); }
+  });
+
+  // ======================================================================
   // Seção Análise (todas as turmas: realizadas, em andamento e futuras)
   // ======================================================================
   function anList() {
@@ -1648,9 +1883,7 @@
     var comDados = list.filter(function (t) { return ocupPct(t) !== null; });
     var pcts = comDados.map(ocupPct);
     var atuais = comDados.map(function (t) { return t.matriculas.atual; });
-    var maxs = comDados.map(function (t) { return t.matriculas.max; });
     var dur = list.filter(function (t) { return t.data_inicio && t.data_fim; }).map(function (t) { return daysBetween(t.data_inicio, t.data_fim) + 1; });
-    var enc = list.map(function (t) { return t.total_aulas; });
     var comMin = comDados.filter(function (t) { return isNum(t.matriculas.min) && t.matriculas.min > 0; });
     var atingiram = comMin.filter(function (t) { return t.matriculas.atual >= t.matriculas.min; }).length;
     var niv = { risco: 0, atencao: 0, saudavel: 0, lotado: 0 };
@@ -1663,24 +1896,89 @@
       and: list.filter(function (t) { return t.status === "andamento"; }).length,
       fut: list.filter(function (t) { return t.status === "futura" || t.status === "sem_data"; }).length,
       comDados: comDados.length, somaAtual: somaAtual,
-      mediaAtual: avg(atuais), mediaMax: avg(maxs), ocup: avg(pcts),
-      pctMin: comMin.length ? (atingiram / comMin.length) * 100 : null,
-      niv: niv, dur: avg(dur), enc: avg(enc)
+      ocup: avg(pcts), pctMin: comMin.length ? (atingiram / comMin.length) * 100 : null,
+      niv: niv, dur: avg(dur)
     };
   }
 
-  function cmpRowHTML(t) {
-    var nivel = nivelOf(t);
-    var m = t.matriculas;
-    var pct = ocupPct(t);
-    var fill = pct == null ? 0 : Math.min(100, pct);
-    var minPct = m && isNum(m.min) && m.max > 0 && m.min > 0 ? Math.min(100, (m.min / m.max) * 100) : null;
-    return '<button type="button" class="cmp__row cmp__row--' + (nivel || "none") + '" data-id="' + escapeHTML(t.id) + '">' +
-      '<div class="cmp__name">' + escapeHTML(t.turma) + '<small>' + (t.data_inicio ? fmtDateBR(t.data_inicio) : "sem data") + ' · ' + (STATUS_LABEL[t.status] || t.status) + '</small></div>' +
-      '<div class="cmp__track"><div class="cmp__fill" style="width:' + fill + '%"></div>' +
-        (minPct !== null ? '<div class="cmp__min" style="left:' + minPct + '%" title="Mínimo: ' + m.min + '"></div>' : '') + '<div class="cmp__ideal" title="Máximo (ideal)"></div></div>' +
-      '<div class="cmp__val">' + (m && isNum(m.atual) ? '<b>' + m.atual + '</b>/' + (m.max != null ? m.max : "—") + (pct != null ? ' · ' + Math.round(pct) + '%' : '') : '<span class="cell-sub">sem dados</span>') + '</div>' +
-    '</button>';
+  // O programa que o gráfico compara: o escolhido no filtro ou, se houver
+  // "todos", o que tem mais turmas com dados de inscritos.
+  function programaDoGrafico(list) {
+    if (state.an.programa !== "todos") return state.an.programa;
+    var cont = {}, best = null;
+    list.forEach(function (t) {
+      if (ocupPct(t) === null) return;
+      cont[t.programa] = (cont[t.programa] || 0) + 1;
+      if (best === null || cont[t.programa] > cont[best]) best = t.programa;
+    });
+    return best;
+  }
+
+  function shortLabel(t) {
+    var m = /(\d+)/.exec(t.turma);
+    return m ? String(parseInt(m[1], 10)) : t.turma.slice(0, 6);
+  }
+
+  // Gráfico de linha: uma marca por turma, em ordem de início. Alunos ou % do máximo.
+  function compareChartSVG(items, metric) {
+    var n = items.length;
+    if (!n) return '<div class="empty-state">Nenhuma turma com dados de inscritos neste recorte.</div>';
+    var pct = metric === "pct";
+    var vals = [], mins = [], maxs = [];
+    items.forEach(function (t) {
+      var m = t.matriculas;
+      vals.push(pct ? ocupPct(t) : m.atual);
+      mins.push(isNum(m.min) && m.min > 0 ? (pct ? (m.max > 0 ? (m.min / m.max) * 100 : null) : m.min) : null);
+      maxs.push(isNum(m.max) && m.max > 0 ? (pct ? 100 : m.max) : null);
+    });
+    var top = 0;
+    [vals, mins, maxs].forEach(function (arr) { arr.forEach(function (v) { if (isNum(v) && v > top) top = v; }); });
+    var yMax = niceCeil(top * 1.08);
+    var W = Math.max(680, 80 + n * 46), H = 320, pl = 46, pr = 26, pt = 22, pb = 58;
+    function X(i) { return n === 1 ? pl + (W - pl - pr) / 2 : pl + (i / (n - 1)) * (W - pl - pr); }
+    function Y(v) { return pt + (1 - v / yMax) * (H - pt - pb); }
+    var suf = pct ? "%" : "";
+    var s = '<svg class="chart cmp-chart" style="min-width:' + W + 'px" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Comparação de inscritos turma a turma">';
+    for (var k = 0; k <= 4; k++) {
+      var v = (yMax / 4) * k;
+      s += '<line class="chart-grid" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '"/>' +
+        '<text class="chart-text" x="' + (pl - 6) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + Math.round(v) + suf + '</text>';
+    }
+    function trilha(arr) {
+      var d = "", pen = false;
+      arr.forEach(function (val, i) {
+        if (!isNum(val)) { pen = false; return; }
+        d += (pen ? "L" : "M") + X(i).toFixed(1) + " " + Y(val).toFixed(1) + " ";
+        pen = true;
+      });
+      return d;
+    }
+    var firstFut = -1;
+    items.forEach(function (t, i) { if (firstFut === -1 && t.status !== "concluida" && t.status !== "andamento") firstFut = i; });
+    if (firstFut > 0) {
+      var xs = ((X(firstFut - 1) + X(firstFut)) / 2).toFixed(1);
+      s += '<line class="chart-sep" x1="' + xs + '" x2="' + xs + '" y1="' + pt + '" y2="' + (H - pb) + '"/>' +
+        '<text class="chart-text" x="' + (Number(xs) + 6) + '" y="' + (pt + 10) + '">turmas futuras →</text>';
+    }
+    if (maxs.some(isNum)) s += '<path class="chart-ideal" fill="none" d="' + trilha(maxs) + '"/>';
+    if (mins.some(isNum)) s += '<path class="chart-min" fill="none" d="' + trilha(mins) + '"/>';
+    s += '<path class="chart-line" d="' + trilha(vals) + '"/>';
+    var mesAnterior = "";
+    items.forEach(function (t, i) {
+      var m = t.matriculas, nivel = nivelOf(t) || "none";
+      var futura = t.status !== "concluida" && t.status !== "andamento";
+      var p = ocupPct(t);
+      var tip = t.turma + " — início " + (t.data_inicio ? fmtDateBR(t.data_inicio) : "a definir") + " — " + m.atual + " de " + (m.max != null ? m.max : "—") + " alunos" +
+        (p !== null ? " (" + Math.round(p) + "% do máximo)" : "") + (nivel !== "none" ? " — " + NIVEL_LABEL[nivel] : "");
+      s += '<circle class="cdot cdot--' + nivel + (futura ? " is-futura" : "") + '" data-id="' + escapeHTML(t.id) + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(vals[i]).toFixed(1) + '" r="5.5"><title>' + escapeHTML(tip) + '</title></circle>';
+      s += '<text class="chart-text" x="' + X(i).toFixed(1) + '" y="' + (H - pb + 17) + '" text-anchor="middle">' + escapeHTML(shortLabel(t)) + '</text>';
+      var mes = t.data_inicio ? t.data_inicio.slice(0, 7) : "";
+      if (mes && mes !== mesAnterior) {
+        s += '<text class="chart-text chart-text--sub" x="' + X(i).toFixed(1) + '" y="' + (H - pb + 32) + '" text-anchor="middle">' + MESES[Number(mes.slice(5)) - 1] + "/" + mes.slice(2, 4) + '</text>';
+        mesAnterior = mes;
+      }
+    });
+    return '<div class="chart-wrap">' + s + "</svg></div>";
   }
 
   function renderAnalise() {
@@ -1688,78 +1986,73 @@
     var f = state.an;
     var list = anList();
     var st = statsOf(list);
+
     var progSel = '<option value="todos">Todos os programas</option>' + programs().map(function (p) {
       return '<option value="' + escapeHTML(p) + '"' + (f.programa === p ? " selected" : "") + '>' + escapeHTML(programLabel(p)) + '</option>';
     }).join("");
-    var statusTabs = [["todas", "Todas"], ["realizadas", "Já realizadas"], ["andamento", "Em andamento"], ["futuras", "Ainda vão acontecer"]].map(function (s) {
+    var periodo = [["todas", "Todas"], ["realizadas", "Já realizadas"], ["andamento", "Em andamento"], ["futuras", "Ainda vão acontecer"]].map(function (s) {
       return '<button role="tab" data-an-status="' + s[0] + '" aria-selected="' + (f.status === s[0]) + '" type="button">' + s[1] + '</button>';
     }).join("");
 
-    // Comparativo por programa
-    var rows = programs().map(function (p) {
-      var l = anList().filter(function (t) { return t.programa === p; });
-      if (f.programa !== "todos" && f.programa !== p) return "";
+    // situação das turmas com dados (barra única)
+    var totalNiv = st.niv.risco + st.niv.atencao + st.niv.saudavel + st.niv.lotado;
+    var barra = totalNiv
+      ? '<div class="stack">' + NIVEL_ORDER.map(function (n) {
+          return st.niv[n] ? '<span class="stack__seg stack__seg--' + n + '" style="flex:' + st.niv[n] + '" title="' + NIVEL_LABEL[n] + ': ' + st.niv[n] + '">' + st.niv[n] + '</span>' : "";
+        }).join("") + '</div>' +
+        '<div class="legend">' + NIVEL_ORDER.map(function (n) { return '<span><i style="background:var(--nivel-' + n + ')"></i>' + NIVEL_LABEL[n] + ' (' + st.niv[n] + ')</span>'; }).join("") + '</div>'
+      : '<div class="empty-state" style="padding:8px 0">Nenhuma turma deste recorte tem dados de inscritos.</div>';
+
+    // gráfico
+    var progG = programaDoGrafico(list);
+    var itens = list.filter(function (t) { return t.programa === progG && ocupPct(t) !== null; })
+      .sort(function (a, b) { return (a.data_inicio || "9999") < (b.data_inicio || "9999") ? -1 : 1; });
+    var auto = f.programa === "todos" && progG;
+    var metricaTabs = [["alunos", "Número de alunos"], ["pct", "% do máximo"]].map(function (m) {
+      return '<button type="button" data-metrica="' + m[0] + '" aria-selected="' + (f.metrica === m[0]) + '">' + m[1] + '</button>';
+    }).join("");
+
+    // comparativo por programa
+    var linhas = programs().map(function (p) {
+      var l = list.filter(function (t) { return t.programa === p; });
       if (!l.length) return "";
       var s = statsOf(l);
       return '<tr class="is-link" data-prog="' + escapeHTML(p) + '">' +
         '<td class="cell-prog">' + escapeHTML(p) + '</td>' +
-        '<td class="num">' + s.total + '</td><td class="num">' + s.conc + '</td><td class="num">' + s.and + '</td><td class="num">' + s.fut + '</td>' +
-        '<td class="num">' + s.comDados + '</td>' +
-        '<td class="num">' + fmt1(s.mediaAtual) + '</td><td class="num">' + fmt1(s.mediaMax) + '</td>' +
+        '<td class="num">' + s.total + '</td><td class="num">' + s.comDados + '</td>' +
         '<td class="num"><b>' + fmtPct(s.ocup) + '</b></td><td class="num">' + fmtPct(s.pctMin) + '</td>' +
         '<td class="num">' + (s.niv.risco ? '<span class="nivel-pill nivel-pill--risco">' + s.niv.risco + '</span>' : "—") + '</td>' +
-        '<td class="num">' + fmt0(s.dur) + '</td><td class="num">' + fmt1(s.enc) + '</td></tr>';
+        '<td class="num">' + fmt0(s.dur) + '</td></tr>';
     }).join("");
 
-    // Comparação turma a turma
-    var cmpHTML;
-    var withData = list.filter(function (t) { return ocupPct(t) !== null; });
-    if (f.programa === "todos") {
-      cmpHTML = '<p class="box__sub">Escolha um programa no filtro acima para comparar todas as turmas dele lado a lado. Abaixo, os extremos de ocupação entre todos os programas.</p>';
-    } else {
-      var l2 = f.semDados ? list.slice() : withData.slice();
-      var ocultas = list.length - withData.length;
-      if (f.ordem === "ocupacao") l2.sort(function (a, b) { return (ocupPct(b) == null ? -1 : ocupPct(b)) - (ocupPct(a) == null ? -1 : ocupPct(a)); });
-      else l2.sort(function (a, b) { return (a.data_inicio || "9999") < (b.data_inicio || "9999") ? -1 : 1; });
-      cmpHTML = '<div class="row-controls"><span class="box__sub">Ordenar por</span>' +
-        '<div class="tabs" id="an-ordem"><button type="button" data-ordem="data" aria-selected="' + (f.ordem === "data") + '">Data de início</button><button type="button" data-ordem="ocupacao" aria-selected="' + (f.ordem === "ocupacao") + '">Ocupação</button></div>' +
-        (ocultas > 0 ? '<label class="check"><input type="checkbox" id="an-semdados"' + (f.semDados ? " checked" : "") + '> incluir ' + ocultas + ' turma' + (ocultas === 1 ? "" : "s") + ' sem dados de inscritos</label>' : '') + '</div>' +
-        '<div class="legend"><span><i style="background:var(--ink)"></i>marca = mínimo</span><span>borda direita = máximo (ideal)</span></div>' +
-        '<div class="cmp">' + (l2.map(cmpRowHTML).join("") || '<div class="empty-state">Sem turmas neste recorte.</div>') + '</div>';
-    }
-
-    var rank = withData.slice().sort(function (a, b) { return ocupPct(b) - ocupPct(a); });
-    var top = rank.slice(0, 6), bottom = rank.slice(-6).reverse();
-    var rankHTML = withData.length
-      ? '<div class="two-col"><div><div class="panel-section-title">Maiores ocupações</div><div class="cmp">' + top.map(cmpRowHTML).join("") + '</div></div>' +
-        '<div><div class="panel-section-title">Menores ocupações</div><div class="cmp">' + bottom.map(cmpRowHTML).join("") + '</div></div></div>'
-      : '<div class="empty-state">Nenhuma turma deste recorte tem dados de inscritos.</div>';
-
-    var cobertura = st.total ? Math.round((st.comDados / st.total) * 100) : 0;
-
     root.innerHTML =
-      '<div class="box"><div class="box__head"><div><h2>Análise comparativa de turmas</h2>' +
-        '<p class="box__sub">Todas as turmas do Cronograma — realizadas, em andamento e futuras — comparadas pelos dados de inscritos, duração e calendário.</p></div>' +
-        '<div class="row-controls"><select class="select" id="an-programa" aria-label="Programa">' + progSel + '</select></div></div>' +
-        '<div class="tabs" id="an-status" role="tablist" aria-label="Período das turmas" style="align-self:flex-start">' + statusTabs + '</div>' +
+      '<div class="box"><div><h2>Análise de turmas</h2>' +
+        '<p class="box__sub">Compara todas as turmas do Cronograma — realizadas, em andamento e futuras. Escolha o programa e o período para ajustar toda a página.</p></div>' +
+        '<div class="an-filters"><select class="select" id="an-programa" aria-label="Programa">' + progSel + '</select>' +
+        '<div class="tabs" id="an-status" role="tablist" aria-label="Período">' + periodo + '</div></div></div>' +
+
+      '<div class="box"><h2>Resumo</h2>' +
         '<div class="kpis">' +
-          '<div class="kpi kpi--accent"><span class="kpi__value">' + st.total + '</span><span class="kpi__label">Turmas no recorte</span><span class="kpi__hint">' + st.conc + ' realizadas · ' + st.and + ' em andamento · ' + st.fut + ' futuras</span></div>' +
-          '<div class="kpi"><span class="kpi__value">' + st.somaAtual.toLocaleString("pt-BR") + '</span><span class="kpi__label">Alunos inscritos</span><span class="kpi__hint">soma das turmas com dados</span></div>' +
-          '<div class="kpi"><span class="kpi__value">' + fmtPct(st.ocup) + '</span><span class="kpi__label">Ocupação média</span><span class="kpi__hint">inscritos ÷ máximo, por turma</span></div>' +
-          '<div class="kpi"><span class="kpi__value">' + fmtPct(st.pctMin) + '</span><span class="kpi__label">Atingiram o mínimo</span><span class="kpi__hint">das turmas com mínimo cadastrado</span></div>' +
-          '<div class="kpi"><span class="kpi__value">' + fmt0(st.dur) + '</span><span class="kpi__label">Duração média (dias)</span><span class="kpi__hint">' + fmt1(st.enc) + ' encontros por turma</span></div>' +
-          '<div class="kpi kpi--gold"><span class="kpi__value">' + cobertura + '%</span><span class="kpi__label">Com dados de inscritos</span><span class="kpi__hint">' + st.comDados + ' de ' + st.total + ' turmas</span></div>' +
+          '<div class="kpi kpi--accent"><span class="kpi__value">' + st.total + '</span><span class="kpi__label">Turmas</span><span class="kpi__hint">' + st.conc + ' realizadas · ' + st.and + ' em andamento · ' + st.fut + ' futuras</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + st.somaAtual.toLocaleString("pt-BR") + '</span><span class="kpi__label">Alunos inscritos</span><span class="kpi__hint">nas ' + st.comDados + ' turmas com dados</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + fmtPct(st.ocup) + '</span><span class="kpi__label">Ocupação média</span><span class="kpi__hint">inscritos ÷ máximo</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + fmtPct(st.pctMin) + '</span><span class="kpi__label">Atingiram o mínimo</span><span class="kpi__hint">das turmas com mínimo definido</span></div>' +
         '</div>' +
-        '<div class="kpis">' + NIVEL_ORDER.map(function (n) { return '<div class="kpi kpi--nivel kpi--' + n + '"><span class="kpi__value">' + st.niv[n] + '</span><span class="kpi__label">' + NIVEL_LABEL[n] + '</span></div>'; }).join("") + '</div>' +
-        '<div class="note">Os dados de inscritos vêm da Planilha Master e cobrem as turmas de 2026 em diante; turmas anteriores aparecem na análise de calendário, mas sem número de alunos.</div></div>' +
+        '<div><div class="panel-section-title">Situação das turmas com dados</div>' + barra + '</div>' +
+        '<div class="note">Os números de inscritos vêm da Planilha Master e existem para as turmas de 2026 em diante: ' + st.comDados + ' de ' + st.total + ' turmas deste recorte têm dados. As demais entram só na análise de calendário.</div></div>' +
 
-      '<div class="box"><div><h2>Comparativo por programa</h2><p class="box__sub">Clique em um programa para ver as turmas dele lado a lado.</p></div>' +
-        '<div class="table-wrap"><table class="data-table"><thead><tr><th>Programa</th><th class="num">Turmas</th><th class="num">Realizadas</th><th class="num">Em andamento</th><th class="num">Futuras</th><th class="num">Com dados</th><th class="num">Média de alunos</th><th class="num">Média do máximo</th><th class="num">Ocupação média</th><th class="num">≥ mínimo</th><th class="num">Em risco</th><th class="num">Duração (dias)</th><th class="num">Encontros</th></tr></thead><tbody>' +
-        (rows || '<tr><td colspan="13" class="empty-state">Sem turmas neste recorte.</td></tr>') + '</tbody></table></div></div>' +
+      '<div class="box"><div class="box__head"><div><h2>Comparação turma a turma' + (progG ? ' — ' + escapeHTML(programLabel(progG)) : '') + '</h2>' +
+        '<p class="box__sub">Cada ponto é uma turma, da mais antiga para a mais nova. Passe o mouse (ou toque) para ver os detalhes e clique para abrir a turma.</p></div>' +
+        '<div class="tabs" id="an-metrica">' + metricaTabs + '</div></div>' +
+        '<div class="legend"><span><i class="l-line"></i>Inscritos (cor = situação)</span><span><i class="l-min"></i>Mínimo</span><span><i class="l-max"></i>' + (f.metrica === "pct" ? "Máximo (100%)" : "Máximo (ideal)") + '</span><span><i class="l-hollow" style="width:10px;height:10px;border-radius:50%;display:inline-block"></i>Turma que ainda não começou</span></div>' +
+        (auto ? '<p class="chart-hint">Mostrando o programa com mais turmas com dados. Para comparar outro, escolha-o no filtro acima.</p>' : '') +
+        compareChartSVG(itens, f.metrica) + '</div>' +
 
-      '<div class="box"><div><h2>Comparação turma a turma</h2></div>' + cmpHTML + '</div>' +
-      '<div class="box"><div><h2>Extremos de ocupação</h2><p class="box__sub">As turmas com maior e menor ocupação do recorte selecionado.</p></div>' + rankHTML + '</div>' +
-      '<div class="box"><div><h2>Calendário: turmas iniciadas por mês</h2><p class="box__sub">Distribuição das aberturas de turma ao longo do tempo, por situação.</p></div>' +
+      '<div class="box"><div><h2>Comparativo por programa</h2><p class="box__sub">Clique em um programa para filtrar a página inteira por ele.</p></div>' +
+        '<div class="table-wrap"><table class="data-table"><thead><tr><th>Programa</th><th class="num">Turmas</th><th class="num">Com dados</th><th class="num">Ocupação média</th><th class="num">Atingiram o mínimo</th><th class="num">Em risco</th><th class="num">Duração média (dias)</th></tr></thead><tbody>' +
+        (linhas || '<tr><td colspan="7" class="empty-state">Sem turmas neste recorte.</td></tr>') + '</tbody></table></div></div>' +
+
+      '<div class="box"><div><h2>Calendário: turmas iniciadas por mês</h2><p class="box__sub">Quando as turmas abrem ao longo do tempo, por situação.</p></div>' +
         '<div class="legend"><span><i style="background:var(--status-concluida)"></i>Realizadas</span><span><i style="background:var(--status-andamento)"></i>Em andamento</span><span><i style="background:var(--status-futura)"></i>Futuras</span></div>' +
         monthlyChartSVG(list) + '</div>';
   }
@@ -1768,16 +2061,15 @@
     var t = e.target;
     var sb = t.closest ? t.closest("button[data-an-status]") : null;
     if (sb) { state.an.status = sb.getAttribute("data-an-status"); renderAnalise(); return; }
-    var ob = t.closest ? t.closest("button[data-ordem]") : null;
-    if (ob) { state.an.ordem = ob.getAttribute("data-ordem"); renderAnalise(); return; }
+    var mb = t.closest ? t.closest("button[data-metrica]") : null;
+    if (mb) { state.an.metrica = mb.getAttribute("data-metrica"); renderAnalise(); return; }
     var pr = t.closest ? t.closest("tr[data-prog]") : null;
     if (pr) { state.an.programa = pr.getAttribute("data-prog"); renderAnalise(); window.scrollTo(0, 0); return; }
-    var cr = t.closest ? t.closest("button.cmp__row[data-id]") : null;
-    if (cr) openPanel(cr.getAttribute("data-id"));
+    var dot = t.closest ? t.closest("circle[data-id]") : null;
+    if (dot) openPanel(dot.getAttribute("data-id"));
   });
   document.getElementById("analise-root").addEventListener("change", function (e) {
     if (e.target.id === "an-programa") { state.an.programa = e.target.value; renderAnalise(); }
-    if (e.target.id === "an-semdados") { state.an.semDados = e.target.checked; renderAnalise(); }
   });
 
   // ======================================================================
@@ -1953,13 +2245,51 @@
   });
 
   // ======================================================================
-  // Inicialização
+  // Página de abertura, escolha da visão e atualização dos dados
   // ======================================================================
+  // "usuario" (time comercial): turmas e calendário, sem números de inscritos.
+  // "gestao": tudo. A escolha vale para esta aba do navegador; "Trocar de visão"
+  // volta à página de abertura. Atalhos: /?perfil=usuario e /?perfil=gestao.
+  var CHAVE_PERFIL = "painel-perfil";
+  var PERFIL = null;
+
+  function perfilValido(v) { return v === "gestao" || v === "usuario" ? v : null; }
+  function perfilSalvo() {
+    try { return perfilValido(sessionStorage.getItem(CHAVE_PERFIL)); } catch (e) { return null; }
+  }
+  function salvarPerfil(p) {
+    try {
+      if (p) sessionStorage.setItem(CHAVE_PERFIL, p);
+      else sessionStorage.removeItem(CHAVE_PERFIL);
+    } catch (e) { /* sem armazenamento: a escolha vale só até recarregar */ }
+  }
+
+  function mostrarAbertura(msg) {
+    document.body.classList.add("is-locked");
+    document.getElementById("landing").hidden = false;
+    document.getElementById("landing-erro").textContent = msg || "";
+    Array.prototype.forEach.call(document.querySelectorAll(".choice"), function (b) { b.disabled = false; });
+  }
+  function esconderAbertura() {
+    document.body.classList.remove("is-locked");
+    document.getElementById("landing").hidden = true;
+  }
+
+  function atualizarBarraUsuario() {
+    var chip = document.getElementById("userchip");
+    chip.hidden = false;
+    chip.innerHTML = "Visão: <b>" + (isGestor() ? "Gestão" : "Usuário") + "</b>";
+    document.getElementById("refresh-btn").hidden = !isGestor();
+  }
+
   // Os dados vêm de /api/dashboard-data (o último processamento das planilhas),
-  // então a página fica atual sem novo deploy.
-  function boot(data) {
+  // já na versão da visão escolhida: o servidor tira os números de inscritos
+  // da visão "usuario" antes de enviar.
+  function boot(data, keepScroll) {
     DATA = data;
     TODAY = new Date().toISOString().slice(0, 10);
+    ACESSO = { papel: PERFIL === "gestao" ? "gestor" : "consulta", usuario: "" };
+    if (!isGestor()) { state.kpi = null; state.oc.nivel = null; }
     PAINEL = DATA.ocupacao_painel || null;
     PAINEL_BY_TURMA = {};
     if (PAINEL && PAINEL.turmas) {
@@ -1967,28 +2297,91 @@
     }
     document.getElementById("snapshot-date").textContent = fmtDateLong(DATA.gerado_em.slice(0, 10));
     document.getElementById("fonte-arquivo").textContent = DATA.fonte_arquivo;
-    fillProgramSelect(document.getElementById("filter-programa"));
+    var sel = document.getElementById("filter-programa");
+    fillProgramSelect(sel);
+    sel.value = state.programa;
+    atualizarBarraUsuario();
+    renderViewTabs();
     renderKPIs();
     renderComunidades();
     render();
     var h = (location.hash || "").replace("#", "");
-    setView(VIEWS.indexOf(h) !== -1 ? h : "regua", true);
+    var ok = allowedViews();
+    setView(ok.indexOf(h) !== -1 ? h : (ok.indexOf(state.view) !== -1 ? state.view : "regua"), true, keepScroll);
   }
 
   function showLoadError() {
-    document.getElementById("program-groups").innerHTML =
-      '<p class="empty-state">Não foi possível carregar os dados agora. Recarregue a página em instantes.</p>';
+    var msg = "Não foi possível carregar os dados agora. Recarregue a página em instantes.";
+    document.getElementById("program-groups").innerHTML = '<p class="empty-state">' + msg + "</p>";
+    if (!document.getElementById("landing").hidden) document.getElementById("landing-erro").textContent = msg;
   }
+
+  function carregarDados(keepScroll) {
+    return fetch("/api/dashboard-data?perfil=" + encodeURIComponent(PERFIL), { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.json();
+      })
+      .then(function (d) { esconderAbertura(); boot(d, keepScroll); })
+      .catch(function () {
+        showLoadError();
+        Array.prototype.forEach.call(document.querySelectorAll(".choice"), function (b) { b.disabled = false; });
+      });
+  }
+
+  function escolherPerfil(p) {
+    PERFIL = p;
+    salvarPerfil(p);
+    document.getElementById("landing-erro").textContent = "";
+    Array.prototype.forEach.call(document.querySelectorAll(".choice"), function (b) { b.disabled = true; });
+    return carregarDados(false);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".choice"), function (b) {
+    b.addEventListener("click", function () { escolherPerfil(b.getAttribute("data-perfil")); });
+  });
+
+  document.getElementById("switch-btn").addEventListener("click", function () {
+    PERFIL = null;
+    DATA = null;
+    salvarPerfil(null);
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    mostrarAbertura("");
+  });
+
+  // Só na visão Gestão: busca as planilhas no SharePoint agora, sem esperar a
+  // atualização de hora em hora. Pede a senha de administração, porque a
+  // página não tem login.
+  document.getElementById("refresh-btn").addEventListener("click", function () {
+    var btn = this;
+    var senha = window.prompt("Para atualizar os dados agora, digite a senha de administração:");
+    if (!senha) return;
+    var rotulo = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Atualizando…";
+    showToast("Buscando as planilhas no SharePoint… pode levar até 1 minuto.");
+    fetch("/api/sync", { method: "POST", headers: { "X-Admin-Password": senha } })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (b) { return { ok: r.ok, status: r.status, b: b }; }); })
+      .then(function (res) {
+        if (res.status === 401) { showToast("Senha de administração incorreta."); return null; }
+        if (!res.ok) { showToast("Não foi possível atualizar: " + (res.b.message || res.b.error || ("erro " + res.status))); return null; }
+        return carregarDados(true).then(function () { showToast("Dados atualizados: " + res.b.total_turmas + " turmas."); });
+      })
+      .catch(function () { showToast("Sem conexão com o servidor. Tente de novo."); })
+      .then(function () { btn.disabled = false; btn.textContent = rotulo; });
+  });
 
   window.addEventListener("hashchange", function () {
     var h = (location.hash || "").replace("#", "");
-    if (DATA && VIEWS.indexOf(h) !== -1 && h !== state.view) setView(h, true);
+    if (DATA && allowedViews().indexOf(h) !== -1 && h !== state.view) setView(h, true);
   });
 
-  fetch("/api/dashboard-data", { cache: "no-store" })
-    .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
-    .then(boot)
-    .catch(showLoadError);
+  (function iniciar() {
+    var daUrl = null;
+    try { daUrl = perfilValido(new URLSearchParams(location.search).get("perfil")); } catch (e) {}
+    var escolha = daUrl || perfilSalvo();
+    if (escolha) { escolherPerfil(escolha); } else { mostrarAbertura(""); }
+  })();
 })();
 </script>
 </body>

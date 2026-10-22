@@ -20,7 +20,7 @@ O painel se atualiza sozinho: um cron do Vercel busca as planilhas no Microsoft 
 
 ### Configuração
 
-`api/sync.js` baixa as 3 planilhas direto do SharePoint/OneDrive pela Microsoft Graph e reprocessa. Roda todo dia às 10h UTC (7h em Brasília) pelo cron em `vercel.json`, e também pode ser chamada a qualquer momento (`GET /api/sync` com o header `x-admin-password`).
+`api/sync.js` baixa as 3 planilhas direto do SharePoint/OneDrive pela Microsoft Graph e reprocessa. Roda **de hora em hora** pelo GitHub Actions (veja "Atualização de hora em hora" abaixo), 1 vez por dia às 10h UTC (7h em Brasília) pelo cron do `vercel.json` como reforço, e a qualquer momento pelo botão **Atualizar dados agora** do gestor (ou `GET /api/sync` com o header `x-admin-password`).
 
 Configuração única — exige um administrador do Microsoft 365 (Entra ID / Azure AD):
 
@@ -42,7 +42,16 @@ Configuração única — exige um administrador do Microsoft 365 (Entra ID / Az
 
 6. Redeploy. Para testar sem esperar o horário: `GET /api/sync` com `x-admin-password: <UPLOAD_PASSWORD>` — a resposta traz o mesmo resumo do upload manual.
 
-> **Frequência:** o plano Hobby do Vercel só permite cron **diário**. Em plano Pro, troque `schedule` em `vercel.json` por algo como `"0 * * * *"` (de hora em hora). Em qualquer plano, um agendador externo pode chamar `/api/sync` com a frequência que quiser.
+### Atualização de hora em hora
+
+O plano Hobby do Vercel só permite cron **diário** (um agendamento mais frequente faz o deploy falhar), então o cron do `vercel.json` roda 1 vez por dia como reforço e o **relógio de hora em hora é o GitHub Actions**: o arquivo `.github/workflows/atualizar-dados.yml` chama `/api/sync` com a chave `CRON_SECRET` todo início de hora (+7 minutos, em UTC).
+
+Configuração única:
+1. No GitHub, abra o repositório e vá em *Settings → Secrets and variables → Actions → New repository secret*. Nome: `CRON_SECRET`; valor: o **mesmo** texto da variável `CRON_SECRET` do Vercel. (Se não tiver mais o valor, gere um novo, troque nos dois lugares e faça Redeploy no Vercel.)
+2. Garanta que o arquivo `.github/workflows/atualizar-dados.yml` está no repositório (pelo GitHub: *Add file → Create new file* e digite o caminho completo, com as barras).
+3. Teste na hora em *Actions → Atualizar dados do painel → Run workflow*. A execução deve terminar verde e mostrar o resumo de turmas no log. Falhas aparecem em vermelho e o GitHub avisa por e-mail.
+
+Observações: o GitHub pode atrasar alguns minutos um agendamento em horário de pico, e em repositórios **públicos** ele pausa os agendamentos depois de 60 dias sem nenhuma atividade no repositório (basta reativar na aba Actions). Com um plano Pro do Vercel, dá para trocar o `schedule` do `vercel.json` por `"0 * * * *"` e dispensar o GitHub Actions.
 
 ## Produtos cobertos
 
@@ -50,13 +59,28 @@ PFIC, PFCC, PFCC LATAM, ABP, Lean Governance, Board 360, CES, Board Sprint, MBAI
 
 ## O que o painel mostra (`index.html`)
 
-Três seções, escolhidas pelas abas no topo (o endereço guarda a seção: `/#regua`, `/#ocupacao`, `/#analise`):
+Quatro seções, escolhidas pelas abas no topo (o endereço guarda a seção: `/#regua`, `/#prioridades`, `/#ocupacao`, `/#analise`):
+
+- **Dados por turma** (`/#prioridades`) — para o time comercial saber quais turmas priorizar: lista as turmas ativas e futuras ordenadas por situação (**em risco** → **atenção** → **saudável** → **lotada**) com a prioridade de venda (alta, média, baixa, nenhuma). Mostra só a situação, sem números de alunos.
 
 - **Turmas** — cards de cada turma com **inscritos / máximo**, mínimo, vagas livres e o nível da turma: **em risco** (alunos ≤ mínimo), **atenção** (acima do mínimo e abaixo de 75% do ideal), **saudável** (75% a 99% do ideal) e **lotada** (ideal ou mais). É a mesma regra do semáforo da planilha de Ocupação (conferida contra as 45 turmas dela: 45/45 iguais), aplicada a todas as turmas que têm mínimo/ideal/inscritos no Master. Os cartões de resumo no topo (ativas/futuras, em andamento, abaixo do mínimo, próxima aula e os quatro níveis) são clicáveis e funcionam como filtro; clicar de novo, ou em "Limpar filtro", desfaz.
 - **Ocupação** — espelha as abas DASH e EVOLUÇÃO da planilha Ocupação de Turmas: totais da semana vigente, a tabela "status por turma" (ordenável, com minigráfico de evolução, clique abre a turma) e a evolução semanal de alunos por turma e no total. Vem de `ocupacao_painel` no JSON (`lib/parseOcupacao.js`, `extractPainel`).
 - **Análise de turmas** — compara **todas** as turmas do Cronograma (realizadas, em andamento e futuras): resumo do recorte, comparativo por programa (ocupação média, % que atingiu o mínimo, duração, encontros), comparação turma a turma com barras, extremos de ocupação e turmas iniciadas por mês. Os números de inscritos vêm do Master e só existem de 2026 em diante, e a tela mostra a cobertura (quantas turmas têm dados).
 
 O botão de tema (claro/escuro) fica no topo e lembra a escolha no navegador. O logo é `logo-b.png` (o "B" da Board), usado também no ícone da aba e na imagem exportada. Todo o painel é assinado como **Inteligência Comercial**.
+
+## Página de abertura: Usuário e Gestão
+
+Ao abrir o painel aparece uma página com dois botões, e cada um leva à sua visão. A escolha fica guardada na aba do navegador; o botão **Trocar de visão** (no topo) volta à abertura. Atalhos diretos: `/?perfil=usuario` e `/?perfil=gestao`.
+
+| Visão | Para quem | O que mostra |
+|---|---|---|
+| **Usuário** | time comercial (tela compartilhada com clientes) | Turmas e calendário **sem números de inscritos**, e a aba **Dados por turma** (só a situação: risco, atenção, saudável, lotada) |
+| **Gestão** | análise comercial | Tudo: inscritos e máximo de cada turma, abas Ocupação e Análise, e o botão **Atualizar dados agora** (pede a `UPLOAD_PASSWORD`) |
+
+A separação é feita **no servidor** (`lib/access.js`): a visão Usuário recebe o JSON já sem nenhum número de inscritos, então nada sensível chega àquela tela (esconder só no visual não bastaria).
+
+**Atenção: não há senha nem cadastro nesta etapa.** A escolha é só uma separação de telas: quem souber o endereço pode pedir `perfil=gestao`. Para proteger a Gestão de verdade depois, o ponto único é `api/dashboard-data.js` (exigir credencial antes de devolver `perfil=gestao`).
 
 ## Papel de cada planilha
 
@@ -81,6 +105,7 @@ Sem isso, `/admin` continua acessível mas todo upload falha (a função recusa 
 - `index.html` — o painel (busca dados via fetch, não tem mais dado embutido).
 - `admin/index.html` — página de upload self-service (3 arquivos).
 - `api/process.js` — upload manual: recebe os 3 arquivos, processa, salva no Blob.
+- `lib/access.js` — separa os dados por visão (Usuário sem inscritos / Gestão completo); `lib/nivel.js` — regra do nível da turma.
 - `api/sync.js` + `lib/graphSource.js` — atualização automática: baixa os 3 arquivos do Microsoft 365 (Graph API) e reprocessa; chamada pelo cron de `vercel.json`.
 - `lib/pipeline.js` — o núcleo compartilhado pelo upload manual e o sync (parse → cruzamento → publicação, preservando turmas manuais).
 - `api/dashboard-data.js` — serve os dados atuais pro painel (com fallback para o `data/dashboard-data.seed.json` embutido, caso nunca tenha havido upload — o seed foi regenerado em 15/10/2026 com os 14 produtos e as 3 planilhas, então o painel já nasce completo e é substituído na primeira atualização).

@@ -331,8 +331,10 @@
     });
   }
 
+  // Pede a visão completa (perfil=gestao): sem ela os números de inscritos vêm
+  // vazios e seriam apagados ao salvar uma turma editada.
   function loadTurmas() {
-    return fetch("/api/dashboard-data", { cache: "no-store" })
+    return fetch("/api/dashboard-data?perfil=gestao", { cache: "no-store" })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         DATA = data;
