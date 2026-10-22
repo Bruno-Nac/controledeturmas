@@ -1,4 +1,4 @@
-﻿# Régua de Turmas
+# Painel de Turmas
 
 Dashboard do cronograma de turmas e programas da Board Academy. Site estático (`index.html`) + funções serverless que processam as planilhas de origem e mantêm o painel atualizado — sem Python, sem SharePoint automatizado, sem depender de ninguém rodar comando nenhum.
 
@@ -8,10 +8,10 @@ Fluxo manual (atalho — o fluxo automático está na próxima seção):
 
 1. Alguém baixa as três planilhas mais recentes do SharePoint:
    - **Cronograma Oficial Board - Turmas.xlsx** — cronograma de aulas por turma, de todos os produtos ativos.
-   - **Ocupação de Turmas.xlsx** — número de alunos/vagas por turma (fonte principal de ocupação).
-   - **Planilha_Master_Controle_Alunos_2026.xlsx** — controle de matrículas (usada como reforço para turmas que a Ocupação ainda não cobre).
+   - **Ocupação de Turmas.xlsx** — análise do andamento das inscrições (semáforo de risco, % do ideal, tendência semanal).
+   - **Planilha_Master_Controle_Alunos_2026.xlsx** — controle de inscritos por turma e vendas (fonte oficial de inscritos, mínimo e ideal).
 2. Abre `/admin` neste site, digita a senha e arrasta os três arquivos.
-3. A função `/api/process` lê as planilhas, roda a mesma lógica de extração que os scripts Python faziam (portada e estendida para JavaScript, ver `lib/`), cruza cronograma + ocupação + matrículas, e salva o resultado no Vercel Blob.
+3. A função `/api/process` lê as planilhas, roda a mesma lógica de extração que os scripts Python faziam (portada e estendida para JavaScript, ver `lib/`), cruza as três e salva o resultado no Vercel Blob.
 4. O painel (`/`) busca os dados de `/api/dashboard-data` a cada carregamento — sempre reflete o último upload, sem precisar de redeploy.
 
 ## Atualização automática (sem ninguém subir arquivo)
@@ -24,7 +24,7 @@ O painel se atualiza sozinho: um cron do Vercel busca as planilhas no Microsoft 
 
 Configuração única — exige um administrador do Microsoft 365 (Entra ID / Azure AD):
 
-1. **Registrar um app** em *Microsoft Entra ID → App registrations → New registration* (qualquer nome, ex.: "Regua de Turmas"). Anote o *Directory (tenant) ID* e o *Application (client) ID*.
+1. **Registrar um app** em *Microsoft Entra ID → App registrations → New registration* (qualquer nome, ex.: "Painel de Turmas"). Anote o *Directory (tenant) ID* e o *Application (client) ID*.
 2. Em *Certificates & secrets*, criar um **client secret** e copiar o valor.
 3. Em *API permissions → Microsoft Graph → Application permissions*, adicionar **`Files.Read.All`** e clicar em **Grant admin consent**. (Se o admin preferir restringir a só esses 3 arquivos/sites, `Sites.Selected` também funciona, concedendo acesso por site.)
 4. No SharePoint/OneDrive, copiar o link de compartilhamento de cada uma das 3 planilhas (*Compartilhar → Copiar link*).
@@ -48,9 +48,25 @@ Configuração única — exige um administrador do Microsoft 365 (Entra ID / Az
 
 PFIC, PFCC, PFCC LATAM, ABP, Lean Governance, Board 360, CES, Board Sprint, MBAI, LinkedIn Program, Advisor Program, IA na Prática, B2B e CNP (Conselho na Prática — tratado como turma de sessão única, já que não é uma turma com disciplina/facilitador como as demais). Produtos com aba oculta/descontinuada no Cronograma (GRC, Empremax, Master Board, C-Level Program, Succession Program, AI Leadership Program, Global Program, PFCC FORTAL, ESG Starter, AI onBoard...) não entram — reavalie `lib/parseTurmas.js`'s `TARGETS` se algum desses voltar a ser mantido.
 
-## Como o cruzamento de ocupação funciona
+## O que o painel mostra (`index.html`)
 
-`lib/parseOcupacao.js` lê a aba `PROGRAMAS` da planilha de Ocupação (uma linha por turma, todos os produtos) e normaliza o rótulo livre da coluna PROGRAMA ("PFCC MX 2ª/4ª", "ABP Online 3ª/5ª"...) para o nome canônico usado no Cronograma. `lib/buildDashboard.js` casa cada turma extraída do Cronograma com uma linha da Ocupação por número de turma primeiro ("PFCC116" ↔ "T116") e, se isso falhar, pela data de início mais próxima dentro do mesmo programa (tolerância de 10 dias) — como as duas planilhas são mantidas por pessoas diferentes, nomes e numeração às vezes divergem. Se uma linha da Ocupação não casar com nenhuma turma, ela aparece em `ocupacao_nao_vinculada` na resposta do upload — vale conferir essa lista depois de cada atualização.
+Três seções, escolhidas pelas abas no topo (o endereço guarda a seção: `/#regua`, `/#ocupacao`, `/#analise`):
+
+- **Turmas** — cards de cada turma com **inscritos / máximo**, mínimo, vagas livres e o nível da turma: **em risco** (alunos ≤ mínimo), **atenção** (acima do mínimo e abaixo de 75% do ideal), **saudável** (75% a 99% do ideal) e **lotada** (ideal ou mais). É a mesma regra do semáforo da planilha de Ocupação (conferida contra as 45 turmas dela: 45/45 iguais), aplicada a todas as turmas que têm mínimo/ideal/inscritos no Master. Os cartões de resumo no topo (ativas/futuras, em andamento, abaixo do mínimo, próxima aula e os quatro níveis) são clicáveis e funcionam como filtro; clicar de novo, ou em "Limpar filtro", desfaz.
+- **Ocupação** — espelha as abas DASH e EVOLUÇÃO da planilha Ocupação de Turmas: totais da semana vigente, a tabela "status por turma" (ordenável, com minigráfico de evolução, clique abre a turma) e a evolução semanal de alunos por turma e no total. Vem de `ocupacao_painel` no JSON (`lib/parseOcupacao.js`, `extractPainel`).
+- **Análise de turmas** — compara **todas** as turmas do Cronograma (realizadas, em andamento e futuras): resumo do recorte, comparativo por programa (ocupação média, % que atingiu o mínimo, duração, encontros), comparação turma a turma com barras, extremos de ocupação e turmas iniciadas por mês. Os números de inscritos vêm do Master e só existem de 2026 em diante, e a tela mostra a cobertura (quantas turmas têm dados).
+
+O botão de tema (claro/escuro) fica no topo e lembra a escolha no navegador. O logo é `logo-b.png` (o "B" da Board), usado também no ícone da aba e na imagem exportada. Todo o painel é assinado como **Inteligência Comercial**.
+
+## Papel de cada planilha
+
+- **Cronograma** — a lista oficial e 100% atualizada das turmas: define quais turmas existem, datas e aulas. Nada aparece no painel que não esteja nele.
+- **Master** — controle de inscritos e vendas: é a fonte oficial de **inscritos, mínimo e ideal** de cada turma. Um mínimo/ideal `0` no Master significa meta ainda não cadastrada e cai para o valor da Ocupação.
+- **Ocupação** — análise em cima dos inscritos: semáforo de risco, % do ideal e tendência semanal. No painel ela entra como `matriculas.analise`; os números só vêm dela quando o Master não tem a turma (`matriculas.fonte` indica a origem).
+
+## Como o cruzamento da Ocupação funciona
+
+`lib/parseOcupacao.js` lê a aba `PROGRAMAS` da planilha de Ocupação (uma linha por turma, todos os produtos) e normaliza o rótulo livre da coluna PROGRAMA ("PFCC MX 2ª/4ª", "ABP Online 3ª/5ª"...) para o nome canônico usado no Cronograma. `lib/buildDashboard.js` casa cada turma extraída do Cronograma com uma linha da Ocupação (para a análise) por número de turma primeiro ("PFCC116" ↔ "T116") e, se isso falhar, pela data de início mais próxima dentro do mesmo programa (tolerância de 10 dias) — como as duas planilhas são mantidas por pessoas diferentes, nomes e numeração às vezes divergem. Se uma linha da Ocupação não casar com nenhuma turma, ela aparece em `ocupacao_nao_vinculada` na resposta do upload — vale conferir essa lista depois de cada atualização.
 
 ## Setup necessário no Vercel (uma vez só)
 

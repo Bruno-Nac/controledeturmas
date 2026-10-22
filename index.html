@@ -1,4 +1,10 @@
-<title>Régua de Turmas</title>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Turmas · Inteligência Comercial</title>
+<link rel="icon" type="image/png" href="/logo-b.png">
 <style>
   :root {
     --paper: #f2f4f2;
@@ -21,6 +27,14 @@
     --status-andamento-soft: #f5e9d4;
     --status-concluida: #6f7a82;
     --status-concluida-soft: #e6e9ea;
+    --nivel-risco: #b3372b;
+    --nivel-risco-soft: #f8e0dd;
+    --nivel-atencao: #c2570c;
+    --nivel-atencao-soft: #fbe5d2;
+    --nivel-saudavel: #21714f;
+    --nivel-saudavel-soft: #e0efe6;
+    --nivel-lotado: #2563a8;
+    --nivel-lotado-soft: #dce9f7;
     --shadow: 0 1px 2px rgba(22, 35, 44, 0.06), 0 8px 24px -12px rgba(22, 35, 44, 0.18);
     --radius: 10px;
     --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
@@ -49,6 +63,14 @@
       --status-andamento-soft: #332711;
       --status-concluida: #8b9a95;
       --status-concluida-soft: #202a2c;
+      --nivel-risco: #ef7b6e;
+      --nivel-risco-soft: #3a1b18;
+      --nivel-atencao: #f09a4d;
+      --nivel-atencao-soft: #3a2410;
+      --nivel-saudavel: #4fae7f;
+      --nivel-saudavel-soft: #17301f;
+      --nivel-lotado: #6aa6e8;
+      --nivel-lotado-soft: #14263a;
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
     }
   }
@@ -74,8 +96,18 @@
     --status-andamento-soft: #332711;
     --status-concluida: #8b9a95;
     --status-concluida-soft: #202a2c;
+    --nivel-risco: #ef7b6e;
+    --nivel-risco-soft: #3a1b18;
+    --nivel-atencao: #f09a4d;
+    --nivel-atencao-soft: #3a2410;
+    --nivel-saudavel: #4fae7f;
+    --nivel-saudavel-soft: #17301f;
+    --nivel-lotado: #6aa6e8;
+    --nivel-lotado-soft: #14263a;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
   }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
 
   * { box-sizing: border-box; }
   html { color-scheme: light dark; }
@@ -89,8 +121,9 @@
     -webkit-font-smoothing: antialiased;
   }
   ::selection { background: var(--accent-soft); color: var(--ink); }
-  button { font: inherit; }
+  button { font: inherit; color: inherit; }
   a { color: var(--accent-strong); }
+  [hidden] { display: none !important; }
 
   .app {
     max-width: 1240px;
@@ -104,20 +137,22 @@
   /* ---------- Topbar ---------- */
   .topbar {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
   }
   .topbar__title { display: flex; align-items: center; gap: 14px; }
   .topbar__mark {
-    width: 44px; height: 44px;
+    width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    background: var(--accent-soft);
-    border-radius: 10px;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 12px;
     flex: none;
+    box-shadow: var(--shadow);
   }
+  .topbar__mark img { width: 30px; height: auto; display: block; }
   .topbar__title h1 {
     font-family: var(--serif);
     font-size: 26px;
@@ -126,12 +161,47 @@
     letter-spacing: 0.2px;
     text-wrap: balance;
   }
-  .topbar__meta {
-    margin: 0;
-    font-size: 13px;
-    color: var(--ink-soft);
-  }
+  .topbar__meta { margin: 0; font-size: 13px; color: var(--ink-soft); }
   .topbar__meta strong { color: var(--ink); font-weight: 600; }
+  .topbar__brand { color: var(--gold); font-weight: 700; letter-spacing: 0.3px; }
+
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+  .theme-toggle:hover { border-color: var(--line-strong); background: var(--paper-sunken); }
+  .theme-toggle svg { width: 16px; height: 16px; flex: none; }
+  .theme-toggle[data-mode="light"] .icon-sun { display: none; }
+  .theme-toggle[data-mode="dark"] .icon-moon { display: none; }
+
+  /* ---------- View tabs ---------- */
+  .viewbar { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .viewbar button {
+    border: none;
+    background: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+  }
+  .viewbar button:hover { color: var(--ink); }
+  .viewbar button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--gold); }
+
+  .view, #ocupacao-root, #analise-root { display: flex; flex-direction: column; gap: 22px; }
 
   /* ---------- KPIs ---------- */
   .kpis {
@@ -148,7 +218,12 @@
     flex-direction: column;
     gap: 4px;
     box-shadow: var(--shadow);
+    text-align: left;
+    position: relative;
   }
+  button.kpi { cursor: pointer; transition: transform 0.12s ease, border-color 0.12s ease; }
+  button.kpi:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+  button.kpi[aria-pressed="true"] { border-color: var(--accent-strong); box-shadow: 0 0 0 2px var(--accent-strong), var(--shadow); }
   .kpi__value {
     font-family: var(--serif);
     font-size: 28px;
@@ -162,9 +237,33 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
+  .kpi__hint { font-size: 11px; color: var(--ink-faint); }
   .kpi--accent .kpi__value { color: var(--accent-strong); }
   .kpi--gold .kpi__value { color: var(--gold); }
   .kpi--warn .kpi__value { color: var(--status-andamento); }
+  .kpi--nivel { border-left: 4px solid var(--kpi-color, var(--line)); }
+  .kpi--nivel .kpi__value { color: var(--kpi-color); }
+  .kpi--risco { --kpi-color: var(--nivel-risco); }
+  .kpi--atencao { --kpi-color: var(--nivel-atencao); }
+  .kpi--saudavel { --kpi-color: var(--nivel-saudavel); }
+  .kpi--lotado { --kpi-color: var(--nivel-lotado); }
+  .kpi--neg .kpi__value { color: var(--nivel-risco); }
+  .section-label {
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--ink-faint); margin: 0 0 -10px;
+  }
+
+  .filter-chip {
+    display: inline-flex; align-items: center; gap: 10px; align-self: flex-start;
+    background: var(--accent-soft); color: var(--accent-strong);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 8px 6px 14px; font-size: 13px; font-weight: 600;
+  }
+  .filter-chip button {
+    border: none; background: var(--paper-raised); border-radius: 999px;
+    padding: 3px 10px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--ink-soft);
+  }
+  .filter-chip button:hover { color: var(--ink); }
 
   /* ---------- Toolbar ---------- */
   .toolbar {
@@ -246,14 +345,10 @@
     font-weight: 600;
     margin: 0;
   }
-  .program-group__count {
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    margin-left: auto;
-  }
+  .program-group__count { font-size: 12.5px; color: var(--ink-soft); margin-left: auto; }
   .program-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
     gap: 12px;
   }
   .program-group__head[aria-expanded="false"] + .program-grid { display: none; }
@@ -268,6 +363,7 @@
   .card {
     background: var(--paper-raised);
     border: 1px solid var(--line);
+    border-left: 4px solid var(--card-color, var(--line));
     border-radius: var(--radius);
     padding: 14px 16px;
     display: flex;
@@ -279,6 +375,10 @@
     transition: transform 0.12s ease, border-color 0.12s ease;
   }
   .card:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+  .card--risco { --card-color: var(--nivel-risco); }
+  .card--atencao { --card-color: var(--nivel-atencao); }
+  .card--saudavel { --card-color: var(--nivel-saudavel); }
+  .card--lotado { --card-color: var(--nivel-lotado); }
   .card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
   .card__title {
     font-family: var(--serif);
@@ -304,6 +404,20 @@
   .status-pill--andamento::before { background: var(--status-andamento); }
   .status-pill--concluida { background: var(--status-concluida-soft); color: var(--status-concluida); }
   .status-pill--concluida::before { background: var(--status-concluida); }
+  .status-pill--sem_data { background: var(--status-concluida-soft); color: var(--status-concluida); }
+  .status-pill--sem_data::before { background: var(--status-concluida); }
+
+  .nivel-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .nivel-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .nivel-pill--risco { background: var(--nivel-risco-soft); color: var(--nivel-risco); }
+  .nivel-pill--atencao { background: var(--nivel-atencao-soft); color: var(--nivel-atencao); }
+  .nivel-pill--saudavel { background: var(--nivel-saudavel-soft); color: var(--nivel-saudavel); }
+  .nivel-pill--lotado { background: var(--nivel-lotado-soft); color: var(--nivel-lotado); }
+  .nivel-pill--none { background: var(--status-concluida-soft); color: var(--status-concluida); }
 
   .card__meta {
     display: flex; flex-wrap: wrap; gap: 6px 10px;
@@ -315,57 +429,58 @@
     font-variant-numeric: tabular-nums;
     padding-top: 6px;
     border-top: 1px dashed var(--line);
-    display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
   }
   .card__dates b { font-weight: 600; }
 
-  .vagas-chip {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: 600;
+  /* Inscritos / máximo */
+  .enroll { display: flex; flex-direction: column; gap: 6px; }
+  .enroll__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .enroll__count { font-variant-numeric: tabular-nums; display: inline-flex; align-items: baseline; gap: 5px; }
+  .enroll__count b { font-family: var(--serif); font-size: 24px; line-height: 1; }
+  .enroll__count small { font-size: 12.5px; color: var(--ink-soft); }
+  .enroll__bar {
+    position: relative; height: 9px; border-radius: 999px; background: var(--paper-sunken);
+  }
+  .enroll__fill {
+    position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px;
+    background: var(--bar-color, var(--ink-faint));
+  }
+  .enroll__min {
+    position: absolute; top: -3px; width: 2px; height: 15px; background: var(--ink); opacity: 0.55;
+  }
+  .enroll__foot {
+    display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 12px; color: var(--ink-soft);
     font-variant-numeric: tabular-nums;
-    white-space: nowrap;
   }
-  .vagas-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; flex: none; }
-  .vagas-chip--atingido { color: var(--status-futura); }
-  .vagas-chip--atingido::before { background: var(--status-futura); }
-  .vagas-chip--abaixo { color: var(--status-andamento); }
-  .vagas-chip--abaixo::before { background: var(--status-andamento); }
-  .vagas-chip--sem_config { color: var(--ink-faint); }
-  .vagas-chip--sem_config::before { background: var(--ink-faint); }
+  .enroll__foot .enroll__note { margin-left: auto; font-weight: 600; color: var(--bar-color, var(--ink-soft)); }
+  .enroll--risco { --bar-color: var(--nivel-risco); }
+  .enroll--atencao { --bar-color: var(--nivel-atencao); }
+  .enroll--saudavel { --bar-color: var(--nivel-saudavel); }
+  .enroll--lotado { --bar-color: var(--nivel-lotado); }
+  .enroll--none { --bar-color: var(--ink-faint); }
+  .enroll-empty { font-size: 12.5px; color: var(--ink-faint); }
 
-  .vagas-panel { display: flex; flex-direction: column; gap: 8px; }
-  .vagas-panel__row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .vagas-panel__row strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .vagas-panel { display: flex; flex-direction: column; gap: 10px; }
   .vagas-panel__note { font-size: 12.5px; color: var(--ink-soft); }
-  .vagas-bar {
-    position: relative;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--paper-sunken);
-    overflow: visible;
+  .panel-section-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--ink-faint); margin: 0 0 6px;
   }
-  .vagas-bar__fill {
-    position: absolute; left: 0; top: 0; height: 100%;
-    border-radius: 999px;
-    background: var(--status-andamento);
+  .analise-box {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    background: var(--paper-sunken); border-radius: 8px; padding: 10px 12px;
   }
-  .vagas-bar__fill.is-atingido { background: var(--status-futura); }
-  .vagas-bar__min-marker {
-    position: absolute; top: -3px; width: 2px; height: 14px;
-    background: var(--ink-faint);
-  }
+  .analise-box div { display: flex; flex-direction: column; gap: 2px; }
+  .analise-box span { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.4px; }
+  .analise-box b { font-size: 15px; font-variant-numeric: tabular-nums; }
 
   /* ---------- Comunidades ---------- */
   .comunidades { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-  .comunidades__head h2 {
-    font-family: var(--serif); font-size: 18px; font-weight: 600; margin: 0 0 4px;
-  }
+  .comunidades__head h2 { font-family: var(--serif); font-size: 18px; font-weight: 600; margin: 0 0 4px; }
   .comunidades__head p { margin: 0; font-size: 13px; color: var(--ink-soft); }
   .comunidade-series { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
   .comunidade-series__head { display: flex; align-items: baseline; gap: 8px; }
-  .comunidade-series__head h3 {
-    font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0;
-  }
+  .comunidade-series__head h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0; }
   .comunidade-series__count { font-size: 12px; color: var(--ink-faint); }
   .timeline {
     list-style: none; margin: 0; padding: 0;
@@ -386,7 +501,6 @@
     text-transform: uppercase; letter-spacing: 0.4px;
     font-variant-numeric: tabular-nums;
   }
-  .timeline .ev-serie { font-size: 12.5px; color: var(--ink-soft); }
   .timeline .ev-tema { font-size: 13.5px; font-weight: 600; }
   .timeline .ev-convidado { font-size: 12.5px; color: var(--ink-soft); }
   .comunidade-series__empty {
@@ -395,6 +509,95 @@
     border-radius: 8px;
     padding: 12px 14px;
   }
+
+  /* ---------- Painéis (Ocupação / Análise) ---------- */
+  .box {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .box h2 { font-family: var(--serif); font-size: 18px; font-weight: 600; margin: 0; }
+  .box__sub { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .box__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12.5px; color: var(--ink-soft); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .note { font-size: 12.5px; color: var(--ink-soft); background: var(--paper-sunken); border-radius: 8px; padding: 8px 12px; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .data-table th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px;
+    color: var(--ink-faint); font-weight: 700; padding: 0 10px 8px 0; border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .data-table th button {
+    border: none; background: none; padding: 0; font: inherit; text-transform: inherit; letter-spacing: inherit;
+    color: inherit; cursor: pointer; font-weight: 700;
+  }
+  .data-table th button:hover { color: var(--ink); }
+  .data-table th .arrow { margin-left: 3px; }
+  .data-table td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table td.num, .data-table th.num { text-align: right; }
+  .data-table tbody tr.is-link { cursor: pointer; }
+  .data-table tbody tr.is-link:hover td { background: var(--paper-sunken); }
+  .data-table .cell-prog { font-weight: 600; }
+  .data-table .cell-sub { color: var(--ink-faint); font-size: 12px; }
+  .table-wrap { overflow-x: auto; }
+  .mini-bar { position: relative; width: 90px; height: 7px; border-radius: 999px; background: var(--paper-sunken); display: inline-block; vertical-align: middle; margin-left: 8px; }
+  .mini-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--bar-color, var(--ink-faint)); }
+  .delta--up { color: var(--nivel-saudavel); font-weight: 600; }
+  .delta--down { color: var(--nivel-risco); font-weight: 600; }
+
+  .spark { display: block; }
+  .spark path { fill: none; stroke: var(--accent-strong); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+  .spark circle { fill: var(--accent-strong); }
+
+  .chart-wrap { overflow-x: auto; }
+  .chart { width: 100%; min-width: 560px; height: auto; display: block; }
+  .chart-text { fill: var(--ink-faint); font-size: 11px; font-family: var(--sans); }
+  .chart-grid { stroke: var(--line); stroke-width: 1; }
+  .chart-axis { stroke: var(--line-strong); stroke-width: 1; }
+  .chart-line { fill: none; stroke: var(--accent-strong); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+  .chart-area { fill: var(--accent-soft); opacity: 0.7; }
+  .chart-dot { fill: var(--accent-strong); stroke: var(--paper-raised); stroke-width: 1.5; }
+  .chart-min { stroke: var(--nivel-risco); stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .chart-ideal { stroke: var(--nivel-lotado); stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .chart-label-min { fill: var(--nivel-risco); font-size: 11px; font-weight: 600; font-family: var(--sans); }
+  .chart-label-ideal { fill: var(--nivel-lotado); font-size: 11px; font-weight: 600; font-family: var(--sans); }
+  .bar-futura { fill: var(--status-futura); }
+  .bar-andamento { fill: var(--status-andamento); }
+  .bar-concluida { fill: var(--status-concluida); opacity: 0.75; }
+  .bar-sem_data { fill: var(--line-strong); }
+
+  .row-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .check { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); cursor: pointer; }
+  .check input { accent-color: var(--accent-strong); }
+
+  /* Comparação turma a turma */
+  .cmp { display: flex; flex-direction: column; gap: 4px; }
+  .cmp__row {
+    display: grid; grid-template-columns: minmax(150px, 280px) 1fr auto; align-items: center; gap: 12px;
+    padding: 6px 4px; border-radius: 8px; cursor: pointer; background: none; border: none; text-align: left; width: 100%;
+  }
+  .cmp__row:hover { background: var(--paper-sunken); }
+  .cmp__name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+  .cmp__name small { display: block; font-weight: 400; color: var(--ink-faint); font-size: 11.5px; }
+  .cmp__track { position: relative; height: 16px; border-radius: 6px; background: var(--paper-sunken); }
+  .cmp__fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--bar-color, var(--ink-faint)); }
+  .cmp__min { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); opacity: 0.6; }
+  .cmp__ideal { position: absolute; top: -3px; bottom: -3px; right: 0; width: 2px; background: var(--ink-faint); }
+  .cmp__val { font-size: 12.5px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .cmp__val b { font-size: 14px; }
+  .cmp__row--risco { --bar-color: var(--nivel-risco); }
+  .cmp__row--atencao { --bar-color: var(--nivel-atencao); }
+  .cmp__row--saudavel { --bar-color: var(--nivel-saudavel); }
+  .cmp__row--lotado { --bar-color: var(--nivel-lotado); }
+  .cmp__row--none { --bar-color: var(--ink-faint); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 
   /* ---------- Footer ---------- */
   footer {
@@ -405,6 +608,7 @@
     color: var(--ink-faint);
     display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   }
+  footer .sign { color: var(--gold); font-weight: 700; }
 
   /* ---------- Detail overlay ---------- */
   .overlay {
@@ -431,10 +635,7 @@
     border-bottom: 1px solid var(--line);
     display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
   }
-  .panel__head h3 {
-    font-family: var(--serif); font-size: 19px; font-weight: 600; margin: 0 0 6px;
-    text-wrap: balance;
-  }
+  .panel__head h3 { font-family: var(--serif); font-size: 19px; font-weight: 600; margin: 0 0 6px; text-wrap: balance; }
   .panel__close {
     background: var(--paper-sunken); border: 1px solid var(--line);
     width: 30px; height: 30px; border-radius: 50%;
@@ -452,8 +653,6 @@
   }
   .btn--primary { background: var(--accent); color: var(--accent-ink); }
   .btn--primary:hover { background: var(--accent-strong); }
-  .btn--ghost { background: var(--paper-raised); border-color: var(--line); color: var(--ink); }
-  .btn--ghost:hover { border-color: var(--line-strong); }
   .btn[disabled] { opacity: 0.55; cursor: default; }
 
   .aula-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -462,11 +661,7 @@
     color: var(--ink-faint); padding: 0 8px 6px 0; font-weight: 600;
     border-bottom: 1px solid var(--line);
   }
-  .aula-table td {
-    padding: 7px 8px 7px 0;
-    border-bottom: 1px solid var(--line);
-    vertical-align: top;
-  }
+  .aula-table td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
   .aula-table td.col-data { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-soft); }
   .aula-table tr:last-child td { border-bottom: none; }
   .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
@@ -489,49 +684,96 @@
   @media (max-width: 880px) {
     .kpis { grid-template-columns: repeat(2, 1fr); }
     .panel { width: 100%; }
+    .two-col { grid-template-columns: 1fr; }
+    .cmp__row { grid-template-columns: 1fr; gap: 6px; }
+    .cmp__val { text-align: left; }
+    .app { padding: 20px 14px 60px; }
+    .search { width: 100%; }
+    .toolbar { position: static; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .card, .overlay, .panel { transition: none; }
+    .card, .overlay, .panel, button.kpi { transition: none; }
   }
 </style>
-
+<script>
+  // Aplica o tema salvo antes da página ser desenhada, para não piscar no tema errado.
+  (function () {
+    try {
+      var t = localStorage.getItem('regua-theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
 <div class="app">
   <header class="topbar">
     <div class="topbar__title">
-      <div class="topbar__mark">🎓</div>
+      <div class="topbar__mark"><img src="/logo-b.png" alt="Board Academy" width="30"></div>
       <div>
-        <h1>Régua de Turmas</h1>
-        <p class="topbar__meta">Board Academy · captura de <strong id="snapshot-date">—</strong></p>
+        <h1>Painel de Turmas</h1>
+        <p class="topbar__meta"><span class="topbar__brand">Inteligência Comercial</span> · Board Academy · captura de <strong id="snapshot-date">—</strong></p>
       </div>
     </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" data-mode="light" aria-label="Mudar para o modo escuro">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <span id="theme-toggle-label">Modo escuro</span>
+    </button>
   </header>
 
-  <section class="kpis" id="kpis"></section>
+  <nav class="viewbar" id="view-tabs" role="tablist" aria-label="Seções">
+    <button role="tab" data-view="regua" aria-selected="true" type="button">Turmas</button>
+    <button role="tab" data-view="ocupacao" aria-selected="false" type="button">Ocupação</button>
+    <button role="tab" data-view="analise" aria-selected="false" type="button">Análise de turmas</button>
+  </nav>
 
-  <section class="toolbar">
-    <div class="tabs" id="status-tabs" role="tablist" aria-label="Filtrar por status">
-      <button role="tab" data-status="ativas" aria-selected="true" type="button">Ativas &amp; futuras</button>
-      <button role="tab" data-status="todas" aria-selected="false" type="button">Todas</button>
-      <button role="tab" data-status="concluida" aria-selected="false" type="button">Concluídas</button>
+  <!-- ================= Turmas ================= -->
+  <div class="view" id="view-regua">
+    <p class="section-label">Visão geral — clique para filtrar</p>
+    <section class="kpis" id="kpis"></section>
+    <p class="section-label">Situação das inscrições (turmas ativas e futuras)</p>
+    <section class="kpis" id="kpis-nivel"></section>
+    <div class="filter-chip" id="filter-chip" hidden>
+      <span id="filter-chip-label"></span>
+      <button type="button" id="filter-chip-clear">Limpar filtro</button>
     </div>
-    <div class="toolbar__filters">
-      <select class="select" id="filter-programa" aria-label="Filtrar por programa"></select>
-      <input class="search" id="search" type="search" placeholder="Buscar turma, disciplina ou facilitador…" aria-label="Buscar">
-    </div>
-  </section>
 
-  <main id="program-groups"></main>
+    <section class="toolbar">
+      <div class="tabs" id="status-tabs" role="tablist" aria-label="Filtrar por status">
+        <button role="tab" data-status="ativas" aria-selected="true" type="button">Ativas &amp; futuras</button>
+        <button role="tab" data-status="todas" aria-selected="false" type="button">Todas</button>
+        <button role="tab" data-status="concluida" aria-selected="false" type="button">Concluídas</button>
+      </div>
+      <div class="toolbar__filters">
+        <select class="select" id="filter-programa" aria-label="Filtrar por programa"></select>
+        <input class="search" id="search" type="search" placeholder="Buscar turma, disciplina ou facilitador…" aria-label="Buscar">
+      </div>
+    </section>
 
-  <section class="comunidades">
-    <div class="comunidades__head">
-      <h2>Encontros de Comunidades</h2>
-      <p>Próximos encontros por comunidade.</p>
-    </div>
-    <div id="comunidades-list"></div>
-  </section>
+    <main id="program-groups"></main>
+
+    <section class="comunidades" id="comunidades">
+      <div class="comunidades__head">
+        <h2>Encontros de Comunidades</h2>
+        <p>Próximos encontros por comunidade.</p>
+      </div>
+      <div id="comunidades-list"></div>
+    </section>
+  </div>
+
+  <!-- ================= Ocupação ================= -->
+  <div class="view" id="view-ocupacao" hidden>
+    <div id="ocupacao-root"></div>
+  </div>
+
+  <!-- ================= Análise ================= -->
+  <div class="view" id="view-analise" hidden>
+    <div id="analise-root"></div>
+  </div>
 
   <footer>
-    <span>Fonte: <span id="fonte-arquivo">—</span> · dados extraídos manualmente do SharePoint.</span>
+    <span><span class="sign">Inteligência Comercial</span> · Board Academy · Fonte: <span id="fonte-arquivo">—</span> · atualizado automaticamente a partir do SharePoint.</span>
     <span id="footer-count"></span>
   </footer>
 </div>
@@ -567,23 +809,108 @@
 <script>
 (function () {
   "use strict";
+
+  // ======================================================================
+  // Tema claro / escuro
+  // ======================================================================
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById("theme-toggle");
+    var label = document.getElementById("theme-toggle-label");
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+    function effective() {
+      var t = root.getAttribute("data-theme");
+      if (t === "light" || t === "dark") return t;
+      return mq && mq.matches ? "dark" : "light";
+    }
+    function render() {
+      var dark = effective() === "dark";
+      btn.setAttribute("data-mode", dark ? "dark" : "light");
+      label.textContent = dark ? "Modo claro" : "Modo escuro";
+      btn.setAttribute("aria-label", dark ? "Mudar para o modo claro" : "Mudar para o modo escuro");
+    }
+    btn.addEventListener("click", function () {
+      var next = effective() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("regua-theme", next); } catch (e) {}
+      render();
+    });
+    if (mq && mq.addEventListener) mq.addEventListener("change", render);
+    render();
+  })();
+
+  // ======================================================================
+  // Estado e utilidades
+  // ======================================================================
   var DATA = null;
   var TODAY = new Date().toISOString().slice(0, 10);
+  var PAINEL = null;            // DATA.ocupacao_painel (pode não existir em dados antigos)
+  var PAINEL_BY_TURMA = {};     // id da turma -> linha da Ocupação
 
-  var STATUS_LABEL = { futura: "Futura", andamento: "Em andamento", concluida: "Concluída" };
+  var STATUS_LABEL = { futura: "Futura", andamento: "Em andamento", concluida: "Concluída", sem_data: "Sem data" };
+  var NIVEL_LABEL = { risco: "Em risco", atencao: "Atenção", saudavel: "Saudável", lotado: "Lotada" };
+  var NIVEL_ORDER = ["risco", "atencao", "saudavel", "lotado"];
 
-  var state = { statusTab: "ativas", programa: "todos", query: "", collapsed: {} };
+  var state = {
+    view: "regua",
+    statusTab: "ativas", programa: "todos", query: "", kpi: null, collapsed: {},
+    oc: { nivel: null, programa: "todos", sortKey: "inicio", sortDir: 1, turma: null },
+    an: { programa: "todos", status: "todas", ordem: "data", semDados: false }
+  };
 
+  function escapeHTML(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
   function fmtDateBR(iso) {
     if (!iso) return "";
     var p = iso.split("-");
     return p[2] + "/" + p[1] + "/" + p[0];
   }
+  var MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
   function fmtDateLong(iso) {
     if (!iso) return "a definir";
-    var meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
     var p = iso.split("-").map(Number);
-    return p[2] + " " + meses[p[1] - 1] + " " + p[0];
+    return p[2] + " " + MESES[p[1] - 1] + " " + p[0];
+  }
+  function fmtDateShort(iso) {
+    if (!iso) return "";
+    var p = iso.split("-").map(Number);
+    return (p[2] < 10 ? "0" : "") + p[2] + "/" + MESES[p[1] - 1];
+  }
+  function daysBetween(a, b) {
+    return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000);
+  }
+  function isAtiva(t) { return t.status === "futura" || t.status === "andamento"; }
+  function isNum(v) { return typeof v === "number" && !isNaN(v); }
+  function avg(arr) {
+    if (!arr.length) return null;
+    var s = 0;
+    arr.forEach(function (v) { s += v; });
+    return s / arr.length;
+  }
+  function fmt1(v) { return v == null ? "—" : (Math.round(v * 10) / 10).toString().replace(".", ","); }
+  function fmt0(v) { return v == null ? "—" : String(Math.round(v)); }
+  function fmtPct(v) { return v == null ? "—" : Math.round(v) + "%"; }
+
+  // Semáforo da Ocupação (conferido contra as 45 turmas da planilha): lotada no
+  // ideal ou acima; risco no mínimo ou abaixo; saudável a partir de 75% do
+  // ideal; atenção entre o mínimo e 75%.
+  function nivelOcupacao(min, ideal, atual) {
+    if (!isNum(atual) || !isNum(ideal) || !(ideal > 0)) return null;
+    if (atual >= ideal) return "lotado";
+    if (isNum(min) && atual <= min) return "risco";
+    return atual / ideal >= 0.75 ? "saudavel" : "atencao";
+  }
+  function nivelOf(t) {
+    var m = t.matriculas;
+    return m ? nivelOcupacao(m.min, m.max, m.atual) : null;
+  }
+  function ocupPct(t) {
+    var m = t.matriculas;
+    if (!m || !isNum(m.atual) || !isNum(m.max) || !(m.max > 0)) return null;
+    return (m.atual / m.max) * 100;
   }
 
   function programs() {
@@ -592,30 +919,61 @@
       if (seen.indexOf(t.programa) === -1) seen.push(t.programa);
     });
     if (DATA.program_order) {
-      seen.sort(function (a, b) {
-        return DATA.program_order.indexOf(a) - DATA.program_order.indexOf(b);
-      });
+      seen.sort(function (a, b) { return DATA.program_order.indexOf(a) - DATA.program_order.indexOf(b); });
     }
     return seen;
   }
+  function programLabel(p) { return (DATA.program_labels && DATA.program_labels[p]) || p; }
+  function programShort(p) { return p; }
 
-  function programLabel(p) {
-    return (DATA.program_labels && DATA.program_labels[p]) || p;
-  }
-
-  function populateFilters() {
-    var sel = document.getElementById("filter-programa");
+  function fillProgramSelect(sel, withAll) {
+    sel.innerHTML = "";
     var opt = document.createElement("option");
-    opt.value = "todos"; opt.textContent = "Todos os programas";
+    opt.value = "todos"; opt.textContent = withAll || "Todos os programas";
     sel.appendChild(opt);
     programs().forEach(function (p) {
       var o = document.createElement("option");
       o.value = p; o.textContent = programLabel(p);
       sel.appendChild(o);
     });
-    sel.addEventListener("change", function () { state.programa = sel.value; render(); });
   }
 
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("is-visible"); }, 3600);
+  }
+
+  // ======================================================================
+  // Navegação entre seções
+  // ======================================================================
+  var VIEWS = ["regua", "ocupacao", "analise"];
+  function setView(v, skipHash) {
+    if (VIEWS.indexOf(v) === -1) v = "regua";
+    state.view = v;
+    VIEWS.forEach(function (name) {
+      document.getElementById("view-" + name).hidden = name !== v;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#view-tabs button"), function (b) {
+      b.setAttribute("aria-selected", String(b.getAttribute("data-view") === v));
+    });
+    if (!skipHash) {
+      try { history.replaceState(null, "", "#" + v); } catch (e) {}
+    }
+    if (v === "ocupacao") renderOcupacao();
+    if (v === "analise") renderAnalise();
+    window.scrollTo(0, 0);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#view-tabs button"), function (b) {
+    b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
+  });
+
+  // ======================================================================
+  // Turmas: filtros, KPIs, cards
+  // ======================================================================
   function matchesQuery(t, q) {
     if (!q) return true;
     q = q.toLowerCase();
@@ -628,77 +986,194 @@
     return false;
   }
 
+  function proximaAulaData() {
+    var prox = null;
+    DATA.turmas.forEach(function (t) {
+      if (!isAtiva(t)) return;
+      t.aulas.forEach(function (a) {
+        if (a.data && a.data >= TODAY && (!prox || a.data < prox)) prox = a.data;
+      });
+    });
+    return prox;
+  }
+
+  function passesKpi(t) {
+    var k = state.kpi;
+    if (!k) return true;
+    if (k === "andamento") return t.status === "andamento";
+    if (k === "abaixo") return !!(t.matriculas && t.matriculas.status_capacidade === "abaixo");
+    if (k === "proxima") {
+      var d = proximaAulaData();
+      return t.aulas.some(function (a) { return a.data === d; });
+    }
+    return nivelOf(t) === k;
+  }
+
   function filteredTurmas() {
     return DATA.turmas.filter(function (t) {
-      if (state.statusTab === "ativas" && !(t.status === "futura" || t.status === "andamento")) return false;
+      if (state.statusTab === "ativas" && !isAtiva(t)) return false;
       if (state.statusTab === "concluida" && t.status !== "concluida") return false;
       if (state.programa !== "todos" && t.programa !== state.programa) return false;
       if (!matchesQuery(t, state.query)) return false;
+      if (!passesKpi(t)) return false;
       return true;
     });
   }
 
-  function renderKPIs() {
-    var ativas = DATA.turmas.filter(function (t) { return t.status === "futura" || t.status === "andamento"; });
-    var andamento = DATA.turmas.filter(function (t) { return t.status === "andamento"; });
-    var proximaAula = null;
-    ativas.forEach(function (t) {
-      t.aulas.forEach(function (a) {
-        if (a.data && a.data >= TODAY && (!proximaAula || a.data < proximaAula)) proximaAula = a.data;
-      });
-    });
-    var abaixoMinimo = ativas.filter(function (t) {
-      return t.matriculas && t.matriculas.status_capacidade === "abaixo";
-    });
-    var kpis = [
-      { v: ativas.length, l: "Turmas ativas/futuras", cls: "kpi--accent" },
-      { v: andamento.length, l: "Em andamento agora", cls: "" },
-      { v: abaixoMinimo.length, l: "Abaixo do mínimo de alunos", cls: "kpi--warn" },
-      { v: DATA.eventos_comunidades.length, l: "Encontros programados", cls: "kpi--gold" },
-      { v: programs().length, l: "Programas monitorados", cls: "" },
-      { v: proximaAula ? fmtDateBR(proximaAula) : "—", l: "Próxima aula", cls: "" }
-    ];
-    var el = document.getElementById("kpis");
-    el.innerHTML = "";
-    kpis.forEach(function (k) {
-      var d = document.createElement("div");
-      d.className = "kpi " + k.cls;
-      d.innerHTML = '<span class="kpi__value">' + k.v + '</span><span class="kpi__label">' + k.l + '</span>';
-      el.appendChild(d);
-    });
+  var KPI_CHIP = {
+    andamento: "Turmas em andamento agora",
+    abaixo: "Turmas abaixo do mínimo de alunos",
+    proxima: "Turmas com aula na próxima data",
+    risco: "Turmas em risco", atencao: "Turmas em atenção", saudavel: "Turmas saudáveis", lotado: "Turmas lotadas"
+  };
+
+  function kpiButton(key, value, label, cls, hint, pressed) {
+    return '<button type="button" class="kpi ' + cls + '" data-kpi="' + key + '" aria-pressed="' + (pressed ? "true" : "false") + '">' +
+      '<span class="kpi__value">' + value + '</span><span class="kpi__label">' + label + '</span>' +
+      (hint ? '<span class="kpi__hint">' + hint + '</span>' : '') + '</button>';
   }
 
-  function vagasChipHTML(m) {
-    if (!m) return "";
-    if (m.status_capacidade === "sem_config") {
-      return '<span class="vagas-chip vagas-chip--sem_config">' + (m.atual == null ? 0 : m.atual) + ' inscritos</span>';
+  function renderKPIs() {
+    var ativas = DATA.turmas.filter(isAtiva);
+    var andamento = ativas.filter(function (t) { return t.status === "andamento"; });
+    var abaixo = ativas.filter(function (t) { return t.matriculas && t.matriculas.status_capacidade === "abaixo"; });
+    var prox = proximaAulaData();
+    var k = state.kpi;
+    var defaultAtivas = !k && state.statusTab === "ativas";
+
+    document.getElementById("kpis").innerHTML =
+      kpiButton("ativas", ativas.length, "Turmas ativas/futuras", "kpi--accent", "", defaultAtivas) +
+      kpiButton("andamento", andamento.length, "Em andamento agora", "", "", k === "andamento") +
+      kpiButton("abaixo", abaixo.length, "Abaixo do mínimo de alunos", "kpi--warn", "", k === "abaixo") +
+      kpiButton("eventos", DATA.eventos_comunidades.length, "Encontros programados", "kpi--gold", "ver encontros ↓", false) +
+      kpiButton("programas", programs().length, "Programas monitorados", "", "escolher programa", false) +
+      kpiButton("proxima", prox ? fmtDateBR(prox) : "—", "Próxima aula", "", "", k === "proxima");
+
+    var cont = { risco: 0, atencao: 0, saudavel: 0, lotado: 0 }, semDados = 0;
+    ativas.forEach(function (t) {
+      var n = nivelOf(t);
+      if (n) cont[n]++; else semDados++;
+    });
+    document.getElementById("kpis-nivel").innerHTML =
+      NIVEL_ORDER.map(function (n) {
+        return kpiButton(n, cont[n], NIVEL_LABEL[n], "kpi--nivel kpi--" + n,
+          { risco: "no mínimo ou abaixo", atencao: "acima do mín., abaixo de 75%", saudavel: "75% a 99% do ideal", lotado: "ideal atingido" }[n], k === n);
+      }).join("") +
+      '<div class="kpi"><span class="kpi__value" style="color:var(--ink-faint)">' + semDados + '</span><span class="kpi__label">Sem dados de inscritos</span><span class="kpi__hint">fora do controle de matrículas</span></div>';
+
+    var chip = document.getElementById("filter-chip");
+    if (k && KPI_CHIP[k]) {
+      var label = KPI_CHIP[k];
+      if (k === "proxima") label = "Turmas com aula em " + fmtDateBR(prox);
+      document.getElementById("filter-chip-label").textContent = "Filtro: " + label;
+      chip.hidden = false;
+    } else {
+      chip.hidden = true;
     }
-    var label = m.atual + "/" + m.max + " (mín. " + m.min + ")";
-    return '<span class="vagas-chip vagas-chip--' + m.status_capacidade + '">' + label + '</span>';
+  }
+
+  function onKpiClick(key) {
+    if (key === "eventos") {
+      var el = document.getElementById("comunidades");
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (key === "programas") {
+      document.getElementById("filter-programa").focus();
+      return;
+    }
+    state.statusTab = "ativas";
+    if (key === "ativas") state.kpi = null;
+    else state.kpi = state.kpi === key ? null : key;
+    syncStatusTabs();
+    renderKPIs();
+    render();
+  }
+  document.getElementById("view-regua").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button.kpi[data-kpi]") : null;
+    if (b) onKpiClick(b.getAttribute("data-kpi"));
+  });
+  document.getElementById("filter-chip-clear").addEventListener("click", function () {
+    state.kpi = null;
+    renderKPIs();
+    render();
+  });
+
+  function syncStatusTabs() {
+    Array.prototype.forEach.call(document.querySelectorAll("#status-tabs button"), function (b) {
+      b.setAttribute("aria-selected", String(b.getAttribute("data-status") === state.statusTab));
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#status-tabs button"), function (btn) {
+    btn.addEventListener("click", function () {
+      state.statusTab = btn.getAttribute("data-status");
+      state.kpi = null;
+      syncStatusTabs();
+      renderKPIs();
+      render();
+    });
+  });
+  var searchTimer;
+  document.getElementById("search").addEventListener("input", function (e) {
+    clearTimeout(searchTimer);
+    var v = e.target.value;
+    searchTimer = setTimeout(function () { state.query = v; render(); }, 120);
+  });
+  document.getElementById("filter-programa").addEventListener("change", function (e) {
+    state.programa = e.target.value;
+    render();
+  });
+
+  function enrollNote(m, nivel) {
+    if (nivel === "lotado") return m.atual > m.max ? "+" + (m.atual - m.max) + " acima do ideal" : "ideal atingido";
+    if (nivel === "risco") {
+      if (m.atual < m.min) return "faltam " + (m.min - m.atual) + " p/ o mínimo";
+      return "no limite do mínimo";
+    }
+    return (m.max - m.atual) + " vaga" + (m.max - m.atual === 1 ? "" : "s") + " livre" + (m.max - m.atual === 1 ? "" : "s");
+  }
+
+  function enrollHTML(t) {
+    var m = t.matriculas;
+    if (!m || !isNum(m.atual) && !isNum(m.max)) {
+      return isAtiva(t) ? '<div class="enroll-empty">Inscritos: sem dados no controle de matrículas</div>' : "";
+    }
+    var atual = isNum(m.atual) ? m.atual : 0;
+    var nivel = nivelOf(t);
+    if (!nivel) {
+      return '<div class="enroll enroll--none"><div class="enroll__head"><span class="enroll__count"><b>' + atual + '</b><small>inscritos</small></span>' +
+        '<span class="nivel-pill nivel-pill--none">Sem meta</span></div>' +
+        '<div class="enroll__foot"><span>mínimo e máximo ainda não cadastrados</span></div></div>';
+    }
+    var pct = Math.min(100, Math.round((atual / m.max) * 100));
+    var minPct = isNum(m.min) && m.min > 0 ? Math.min(100, Math.round((m.min / m.max) * 100)) : null;
+    return '<div class="enroll enroll--' + nivel + '">' +
+      '<div class="enroll__head"><span class="enroll__count"><b>' + atual + '</b><small>de ' + m.max + ' (máx.)</small></span>' +
+      '<span class="nivel-pill nivel-pill--' + nivel + '">' + NIVEL_LABEL[nivel] + '</span></div>' +
+      '<div class="enroll__bar"><div class="enroll__fill" style="width:' + pct + '%"></div>' +
+      (minPct !== null ? '<div class="enroll__min" style="left:' + minPct + '%" title="Mínimo: ' + m.min + '"></div>' : '') + '</div>' +
+      '<div class="enroll__foot"><span>mín. ' + (isNum(m.min) ? m.min : "—") + '</span><span>máx. ' + m.max + '</span><span>' + Math.round((atual / m.max) * 100) + '% do máx.</span>' +
+      '<span class="enroll__note">' + enrollNote({ atual: atual, min: m.min, max: m.max }, nivel) + '</span></div></div>';
   }
 
   function cardHTML(t) {
     var statusLabel = STATUS_LABEL[t.status] || t.status;
+    var nivel = nivelOf(t);
     var range = t.data_inicio ? (fmtDateBR(t.data_inicio) + (t.data_fim && t.data_fim !== t.data_inicio ? " – " + fmtDateBR(t.data_fim) : "")) : "datas a definir";
     return (
-      '<button class="card" data-id="' + t.id + '">' +
+      '<button class="card' + (nivel ? ' card--' + nivel : '') + '" data-id="' + escapeHTML(t.id) + '">' +
         '<div class="card__top">' +
           '<h3 class="card__title">' + escapeHTML(t.turma) + '</h3>' +
           '<span class="status-pill status-pill--' + t.status + '">' + statusLabel + '</span>' +
         '</div>' +
         '<div class="card__meta">' +
-          (t.modalidade ? '<span>' + t.modalidade + '</span>' : '') +
+          (t.modalidade ? '<span>' + escapeHTML(t.modalidade) + '</span>' : '') +
           '<span>' + t.total_aulas + ' encontro' + (t.total_aulas === 1 ? '' : 's') + '</span>' +
         '</div>' +
-        '<div class="card__dates"><b>' + range + '</b>' + vagasChipHTML(t.matriculas) + '</div>' +
+        enrollHTML(t) +
+        '<div class="card__dates"><b>' + range + '</b></div>' +
       '</button>'
     );
-  }
-
-  function escapeHTML(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
   }
 
   function render() {
@@ -775,31 +1250,165 @@
     }).join("");
   }
 
+  // ======================================================================
+  // Gráficos (SVG sem bibliotecas)
+  // ======================================================================
+  function niceCeil(v) {
+    if (v <= 10) return Math.max(5, Math.ceil(v / 5) * 5);
+    var p = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
+    var n = v / p;
+    var step = n <= 1.5 ? 1.5 : n <= 2 ? 2 : n <= 3 ? 3 : n <= 5 ? 5 : 10;
+    return step * p;
+  }
+
+  function sparkSVG(serie, w, h) {
+    var pts = [];
+    serie.forEach(function (v, i) { if (isNum(v)) pts.push([i, v]); });
+    if (pts.length < 2) return '<span class="cell-sub">—</span>';
+    var max = 0;
+    pts.forEach(function (p) { if (p[1] > max) max = p[1]; });
+    if (max === 0) max = 1;
+    var n = serie.length - 1 || 1;
+    var d = pts.map(function (p, i) {
+      var x = 2 + (p[0] / n) * (w - 4);
+      var y = h - 3 - (p[1] / max) * (h - 6);
+      return (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+    }).join(" ");
+    var last = pts[pts.length - 1];
+    var lx = 2 + (last[0] / n) * (w - 4), ly = h - 3 - (last[1] / max) * (h - 6);
+    return '<svg class="spark" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '" aria-hidden="true"><path d="' + d + '"/><circle cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="2.4"/></svg>';
+  }
+
+  // Linha: labels (ISO), values (número ou null), min/ideal opcionais.
+  function lineChartSVG(labels, values, min, ideal) {
+    var pts = [];
+    values.forEach(function (v, i) { if (isNum(v)) pts.push({ i: i, v: v }); });
+    if (!pts.length) return '<div class="empty-state">Sem registros de evolução para esta seleção.</div>';
+    var W = 760, H = 270, pl = 40, pr = 56, pt = 16, pb = 36;
+    var maxV = 0;
+    pts.forEach(function (p) { if (p.v > maxV) maxV = p.v; });
+    if (isNum(ideal) && ideal > maxV) maxV = ideal;
+    if (isNum(min) && min > maxV) maxV = min;
+    var yMax = niceCeil(maxV * 1.08);
+    var n = labels.length - 1 || 1;
+    function X(i) { return pl + (i / n) * (W - pl - pr); }
+    function Y(v) { return pt + (1 - v / yMax) * (H - pt - pb); }
+    var s = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Evolução de alunos por semana">';
+    var ticks = 4;
+    for (var k = 0; k <= ticks; k++) {
+      var v = (yMax / ticks) * k;
+      s += '<line class="chart-grid" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '"/>' +
+        '<text class="chart-text" x="' + (pl - 6) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + Math.round(v) + '</text>';
+    }
+    var every = Math.max(1, Math.ceil(labels.length / 9));
+    labels.forEach(function (l, i) {
+      if (i % every === 0) s += '<text class="chart-text" x="' + X(i).toFixed(1) + '" y="' + (H - 12) + '" text-anchor="middle">' + fmtDateShort(l) + '</text>';
+    });
+    if (isNum(min) && min > 0) {
+      s += '<line class="chart-min" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(min).toFixed(1) + '" y2="' + Y(min).toFixed(1) + '"/>' +
+        '<text class="chart-label-min" x="' + (W - pr + 6) + '" y="' + (Y(min) + 4).toFixed(1) + '">mín. ' + min + '</text>';
+    }
+    if (isNum(ideal) && ideal > 0) {
+      s += '<line class="chart-ideal" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(ideal).toFixed(1) + '" y2="' + Y(ideal).toFixed(1) + '"/>' +
+        '<text class="chart-label-ideal" x="' + (W - pr + 6) + '" y="' + (Y(ideal) + 4).toFixed(1) + '">ideal ' + ideal + '</text>';
+    }
+    var line = pts.map(function (p, idx) { return (idx ? "L" : "M") + X(p.i).toFixed(1) + " " + Y(p.v).toFixed(1); }).join(" ");
+    var area = line + " L" + X(pts[pts.length - 1].i).toFixed(1) + " " + Y(0).toFixed(1) + " L" + X(pts[0].i).toFixed(1) + " " + Y(0).toFixed(1) + " Z";
+    s += '<path class="chart-area" d="' + area + '"/><path class="chart-line" d="' + line + '"/>';
+    pts.forEach(function (p) {
+      s += '<circle class="chart-dot" cx="' + X(p.i).toFixed(1) + '" cy="' + Y(p.v).toFixed(1) + '" r="3.4"><title>' + fmtDateBR(labels[p.i]) + ": " + p.v + ' alunos</title></circle>';
+    });
+    return '<div class="chart-wrap">' + s + "</svg></div>";
+  }
+
+  // Barras empilhadas por mês (turmas iniciadas), por status.
+  function monthlyChartSVG(list) {
+    var byMonth = {};
+    list.forEach(function (t) {
+      if (!t.data_inicio) return;
+      var k = t.data_inicio.slice(0, 7);
+      if (!byMonth[k]) byMonth[k] = { concluida: 0, andamento: 0, futura: 0, sem_data: 0 };
+      byMonth[k][t.status === "sem_data" ? "futura" : t.status]++;
+    });
+    var keys = Object.keys(byMonth).sort();
+    if (!keys.length) return '<div class="empty-state">Sem turmas com data de início neste recorte.</div>';
+    // preenche meses sem turmas entre o primeiro e o último
+    var all = [], cur = keys[0], end = keys[keys.length - 1];
+    while (cur <= end) {
+      all.push(cur);
+      var p = cur.split("-").map(Number);
+      p[1]++; if (p[1] > 12) { p[1] = 1; p[0]++; }
+      cur = p[0] + "-" + (p[1] < 10 ? "0" : "") + p[1];
+    }
+    var W = 760, H = 250, pl = 30, pr = 10, pt = 14, pb = 34;
+    var maxV = 0;
+    all.forEach(function (k) {
+      var b = byMonth[k] || { concluida: 0, andamento: 0, futura: 0 };
+      var tot = b.concluida + b.andamento + b.futura;
+      if (tot > maxV) maxV = tot;
+    });
+    var yMax = niceCeil(maxV);
+    var slot = (W - pl - pr) / all.length;
+    var bw = Math.min(34, slot * 0.7);
+    function Y(v) { return pt + (1 - v / yMax) * (H - pt - pb); }
+    var s = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Turmas iniciadas por mês">';
+    for (var k = 0; k <= 4; k++) {
+      var v = (yMax / 4) * k;
+      s += '<line class="chart-grid" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '"/>' +
+        '<text class="chart-text" x="' + (pl - 5) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + Math.round(v) + '</text>';
+    }
+    var every = Math.max(1, Math.ceil(all.length / 14));
+    all.forEach(function (key, i) {
+      var b = byMonth[key] || { concluida: 0, andamento: 0, futura: 0 };
+      var x = pl + slot * i + (slot - bw) / 2, acc = 0;
+      ["concluida", "andamento", "futura"].forEach(function (st) {
+        if (!b[st]) return;
+        var y1 = Y(acc + b[st]), y2 = Y(acc);
+        s += '<rect class="bar-' + st + '" x="' + x.toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0, y2 - y1).toFixed(1) + '" rx="2"><title>' + MESES[Number(key.slice(5)) - 1] + "/" + key.slice(0, 4) + " — " + STATUS_LABEL[st] + ": " + b[st] + '</title></rect>';
+        acc += b[st];
+      });
+      if (i % every === 0) {
+        s += '<text class="chart-text" x="' + (pl + slot * i + slot / 2).toFixed(1) + '" y="' + (H - 18) + '" text-anchor="middle">' + MESES[Number(key.slice(5)) - 1] + '</text>' +
+          '<text class="chart-text" x="' + (pl + slot * i + slot / 2).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + key.slice(2, 4) + '</text>';
+      }
+    });
+    return '<div class="chart-wrap">' + s + "</svg></div>";
+  }
+
+  // ======================================================================
+  // Painel lateral de detalhes
+  // ======================================================================
   var currentTurma = null;
 
-  function vagasPanelHTML(m) {
-    if (!m) {
-      return '<div class="vagas-panel__note">Sem dados de matrícula cruzados para esta turma.</div>';
+  function vagasPanelHTML(t) {
+    var m = t.matriculas;
+    if (!m) return '<div class="vagas-panel__note">Sem dados de inscritos para esta turma no controle de matrículas.</div>';
+    var nivel = nivelOf(t);
+    var atual = isNum(m.atual) ? m.atual : 0;
+    var html = '<div class="panel-section-title">Inscritos</div>' + enrollHTML(t);
+    if (nivel) {
+      var note = nivel === "lotado" ? "A turma atingiu o ideal de " + m.max + " alunos."
+        : atual < m.min ? "Faltam " + (m.min - atual) + " aluno(s) para o mínimo de " + m.min + "."
+        : atual === m.min ? "A turma está exatamente no mínimo (" + m.min + ") — qualquer saída coloca em risco."
+        : "Mínimo de " + m.min + " atingido; restam " + (m.max - atual) + " vaga(s) até o ideal de " + m.max + ".";
+      html += '<div class="vagas-panel__note">' + note + '</div>';
     }
-    if (m.status_capacidade === "sem_config") {
-      return (
-        '<div class="vagas-panel__row"><strong>' + (m.atual == null ? 0 : m.atual) + ' inscritos</strong></div>' +
-        '<div class="vagas-panel__note">Mínimo/máximo não configurados para esta turma no controle de matrículas.</div>'
-      );
+    if (m.fonte) html += '<div class="vagas-panel__note">Fonte dos inscritos: ' + (m.fonte === "master" ? "Planilha Master (controle de alunos)" : "Planilha de Ocupação") + '.</div>';
+    var p = PAINEL_BY_TURMA[t.id];
+    var a = m.analise;
+    if (p || a) {
+      var pct = p && p.percent_atual != null ? p.percent_atual : (a ? a.percent_atual : null);
+      var delta = p ? p.delta_semana : (a ? a.delta_semana : "");
+      var tend = p ? p.tendencia : (a ? a.tendencia : "");
+      html += '<div><div class="panel-section-title">Análise da Ocupação de Turmas</div><div class="analise-box">' +
+        '<div><span>% do ideal</span><b>' + (pct != null ? pct + "%" : "—") + '</b></div>' +
+        '<div><span>Δ semana</span><b>' + escapeHTML(delta || "—") + '</b></div>' +
+        '<div><span>Leitura da planilha</span><b>' + escapeHTML(tend || "—") + '</b></div></div></div>';
     }
-    var pct = m.max > 0 ? Math.min(100, Math.round((m.atual / m.max) * 100)) : 0;
-    var minPct = m.max > 0 ? Math.min(100, Math.round((m.min / m.max) * 100)) : 0;
-    var note = m.status_capacidade === "atingido"
-      ? "Mínimo de " + m.min + " alunos atingido."
-      : "Faltam " + (m.faltam_para_minimo != null ? m.faltam_para_minimo : (m.min - m.atual)) + " aluno(s) para o mínimo de " + m.min + ".";
-    return (
-      '<div class="vagas-panel__row"><strong>' + m.atual + '</strong><span class="vagas-panel__note">de ' + m.max + ' vagas (mínimo ' + m.min + ')</span></div>' +
-      '<div class="vagas-bar">' +
-        '<div class="vagas-bar__fill' + (m.status_capacidade === "atingido" ? ' is-atingido' : '') + '" style="width:' + pct + '%"></div>' +
-        '<div class="vagas-bar__min-marker" style="left:' + minPct + '%"></div>' +
-      '</div>' +
-      '<div class="vagas-panel__note">' + note + '</div>'
-    );
+    if (p && p.serie) {
+      html += '<div><div class="panel-section-title">Evolução semanal de inscritos</div>' + lineChartSVG(PAINEL.semanas, p.serie, p.min, p.ideal) + '</div>';
+    }
+    return html;
   }
 
   function openPanel(id) {
@@ -812,8 +1421,8 @@
       '<dt>Programa</dt><dd>' + escapeHTML(programLabel(t.programa)) + '</dd>' +
       '<dt>Status</dt><dd>' + (STATUS_LABEL[t.status] || t.status) + '</dd>' +
       '<dt>Período</dt><dd>' + range + '</dd>' +
-      (t.modalidade ? '<dt>Modalidade</dt><dd>' + t.modalidade + '</dd>' : '');
-    document.getElementById("panel-vagas").innerHTML = vagasPanelHTML(t.matriculas);
+      (t.modalidade ? '<dt>Modalidade</dt><dd>' + escapeHTML(t.modalidade) + '</dd>' : '');
+    document.getElementById("panel-vagas").innerHTML = vagasPanelHTML(t);
     document.getElementById("panel-aulas").innerHTML = t.aulas.map(function (a) {
       return (
         '<tr>' +
@@ -826,44 +1435,354 @@
     }).join("");
     document.getElementById("overlay").classList.add("is-open");
   }
-  function closePanel() {
-    document.getElementById("overlay").classList.remove("is-open");
-  }
-
+  function closePanel() { document.getElementById("overlay").classList.remove("is-open"); }
   document.getElementById("panel-close").addEventListener("click", closePanel);
-  document.getElementById("overlay").addEventListener("click", function (e) {
-    if (e.target.id === "overlay") closePanel();
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") closePanel();
-  });
+  document.getElementById("overlay").addEventListener("click", function (e) { if (e.target.id === "overlay") closePanel(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanel(); });
 
-  Array.prototype.forEach.call(document.querySelectorAll("#status-tabs button"), function (btn) {
-    btn.addEventListener("click", function () {
-      Array.prototype.forEach.call(document.querySelectorAll("#status-tabs button"), function (b) { b.setAttribute("aria-selected", "false"); });
-      btn.setAttribute("aria-selected", "true");
-      state.statusTab = btn.getAttribute("data-status");
-      render();
+  // ======================================================================
+  // Seção Ocupação (abas DASH e EVOLUÇÃO da planilha Ocupação de Turmas)
+  // ======================================================================
+  var OC_COLS = [
+    { key: "programa", label: "Programa", num: false },
+    { key: "inicio", label: "Início", num: false },
+    { key: "min", label: "Mín.", num: true },
+    { key: "ideal", label: "Ideal", num: true },
+    { key: "atual", label: "Alunos", num: true },
+    { key: "pct", label: "% ideal", num: true },
+    { key: "delta", label: "Δ semana", num: true },
+    { key: "nivel", label: "Situação", num: false },
+    { key: "evolucao", label: "Evolução", num: false }
+  ];
+
+  function ocupList() {
+    var f = state.oc;
+    return PAINEL.turmas.filter(function (p) {
+      if (f.nivel && p.nivel !== f.nivel) return false;
+      if (f.programa !== "todos" && p.programa !== f.programa) return false;
+      return true;
     });
-  });
-
-  var searchTimer;
-  document.getElementById("search").addEventListener("input", function (e) {
-    clearTimeout(searchTimer);
-    var v = e.target.value;
-    searchTimer = setTimeout(function () { state.query = v; render(); }, 120);
-  });
-
-  var toastTimer;
-  function showToast(msg) {
-    var t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("is-visible");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove("is-visible"); }, 3600);
+  }
+  function deltaNum(s) {
+    var m = /([▲▼])\s*(\d+)/.exec(s || "");
+    if (!m) return 0;
+    return (m[1] === "▲" ? 1 : -1) * parseInt(m[2], 10);
+  }
+  function sortOc(list) {
+    var k = state.oc.sortKey, d = state.oc.sortDir;
+    var val = {
+      programa: function (p) { return (p.programa_raw || "") + " " + p.turma_codigo; },
+      inicio: function (p) { return p.inicio || "9999"; },
+      min: function (p) { return p.min == null ? -1 : p.min; },
+      ideal: function (p) { return p.ideal == null ? -1 : p.ideal; },
+      atual: function (p) { return p.atual == null ? -1 : p.atual; },
+      pct: function (p) { return p.percent_atual == null ? -1 : p.percent_atual; },
+      delta: function (p) { return deltaNum(p.delta_semana); },
+      nivel: function (p) { var i = NIVEL_ORDER.indexOf(p.nivel); return i === -1 ? 9 : i; },
+      evolucao: function (p) { return p.atual == null ? -1 : p.atual; }
+    }[k];
+    return list.slice().sort(function (a, b) {
+      var x = val(a), y = val(b);
+      return (x < y ? -1 : x > y ? 1 : 0) * d;
+    });
   }
 
-  // ---------- Export to image ----------
+  function ocRowHTML(p) {
+    var nivel = p.nivel;
+    var pct = p.percent_atual;
+    var delta = p.delta_semana || "—";
+    var dcls = /▲/.test(delta) ? "delta--up" : /▼/.test(delta) ? "delta--down" : "";
+    var barPct = p.ideal > 0 && isNum(p.atual) ? Math.min(100, Math.round(p.atual / p.ideal * 100)) : 0;
+    return '<tr' + (p.turma_id ? ' class="is-link" data-turma="' + escapeHTML(p.turma_id) + '"' : ' title="Sem turma correspondente no Cronograma"') + '>' +
+      '<td><div class="cell-prog">' + escapeHTML(p.programa_raw) + '</div><div class="cell-sub">' + escapeHTML(p.turma_codigo) + (p.turma_id ? '' : ' · fora do Cronograma') + '</div></td>' +
+      '<td>' + (p.inicio ? fmtDateBR(p.inicio) : "—") + '</td>' +
+      '<td class="num">' + (p.min == null ? "—" : p.min) + '</td>' +
+      '<td class="num">' + (p.ideal == null ? "—" : p.ideal) + '</td>' +
+      '<td class="num"><b>' + (p.atual == null ? "—" : p.atual) + '</b>' +
+        '<span class="mini-bar enroll--' + (nivel || "none") + '"><i style="width:' + barPct + '%"></i></span></td>' +
+      '<td class="num">' + (pct == null ? "—" : pct + "%") + '</td>' +
+      '<td class="num ' + dcls + '">' + escapeHTML(delta) + '</td>' +
+      '<td>' + (nivel ? '<span class="nivel-pill nivel-pill--' + nivel + '">' + NIVEL_LABEL[nivel] + '</span>' : '<span class="nivel-pill nivel-pill--none">—</span>') + '</td>' +
+      '<td>' + sparkSVG(p.serie, 96, 26) + '</td>' +
+    '</tr>';
+  }
+
+  function renderOcupacao() {
+    var root = document.getElementById("ocupacao-root");
+    if (!PAINEL || !PAINEL.turmas || !PAINEL.turmas.length) {
+      root.innerHTML = '<div class="box"><h2>Ocupação de Turmas</h2><p class="box__sub">Os dados da planilha Ocupação de Turmas ainda não chegaram a este painel. Eles aparecem aqui assim que a próxima atualização automática rodar.</p></div>';
+      return;
+    }
+    var k = PAINEL.kpis || {};
+    var cont = { risco: 0, atencao: 0, saudavel: 0, lotado: 0 };
+    PAINEL.turmas.forEach(function (p) { if (p.nivel) cont[p.nivel]++; });
+    var diff = k.alunos_diferenca;
+    var semana = PAINEL.semana_vigente ? fmtDateLong(PAINEL.semana_vigente) : (PAINEL.semana_rotulo || "—");
+    var f = state.oc;
+
+    var kpiPlan = [];
+    if (k.total_turmas != null) kpiPlan.push('<div class="kpi kpi--accent"><span class="kpi__value">' + k.total_turmas + '</span><span class="kpi__label">Turmas no 2º semestre</span></div>');
+    if (k.alunos != null) kpiPlan.push('<div class="kpi"><span class="kpi__value">' + k.alunos.toLocaleString("pt-BR") + '</span><span class="kpi__label">Alunos (semana vigente)</span></div>');
+    if (k.alunos_ideal != null) kpiPlan.push('<div class="kpi"><span class="kpi__value">' + k.alunos_ideal.toLocaleString("pt-BR") + '</span><span class="kpi__label">Alunos (ideal)</span></div>');
+    if (diff != null) kpiPlan.push('<div class="kpi ' + (diff < 0 ? "kpi--neg" : "kpi--accent") + '"><span class="kpi__value">' + (diff > 0 ? "+" : "") + diff.toLocaleString("pt-BR") + '</span><span class="kpi__label">Diferença p/ o ideal</span></div>');
+    if (k.em_verificacao != null) kpiPlan.push('<div class="kpi kpi--gold"><span class="kpi__value">' + k.em_verificacao + '</span><span class="kpi__label">Em verificação</span><span class="kpi__hint">alunos sem turma alocada</span></div>');
+    if (k.total_geral != null) kpiPlan.push('<div class="kpi"><span class="kpi__value">' + k.total_geral.toLocaleString("pt-BR") + '</span><span class="kpi__label">Total geral</span><span class="kpi__hint">turmas + em verificação</span></div>');
+
+    var niveisHTML = NIVEL_ORDER.map(function (n) {
+      return '<button type="button" class="kpi kpi--nivel kpi--' + n + '" data-nivel="' + n + '" aria-pressed="' + (f.nivel === n) + '"><span class="kpi__value">' + cont[n] + '</span><span class="kpi__label">' + NIVEL_LABEL[n] + '</span></button>';
+    }).join("");
+
+    var progOpts = '<option value="todos">Todos os programas</option>';
+    var seenProg = {};
+    PAINEL.turmas.forEach(function (p) {
+      var key = p.programa_raw;
+      if (!seenProg[key]) { seenProg[key] = true; }
+    });
+    var progList = Object.keys(seenProg).sort();
+    progList.forEach(function (name) {
+      progOpts += '<option value="' + escapeHTML(name) + '"' + (f.programa === name ? " selected" : "") + '>' + escapeHTML(name) + '</option>';
+    });
+
+    var list = sortOc(PAINEL.turmas.filter(function (p) {
+      if (f.nivel && p.nivel !== f.nivel) return false;
+      if (f.programa !== "todos" && p.programa_raw !== f.programa) return false;
+      return true;
+    }));
+
+    var head = OC_COLS.map(function (c) {
+      var sorted = f.sortKey === c.key;
+      return '<th class="' + (c.num ? "num" : "") + '"><button type="button" data-sort="' + c.key + '">' + c.label + '<span class="arrow">' + (sorted ? (f.sortDir > 0 ? "▲" : "▼") : "") + '</span></button></th>';
+    }).join("");
+
+    // série da turma selecionada
+    var selOpts = PAINEL.turmas.map(function (p, i) {
+      return '<option value="' + i + '"' + (f.turma === i ? " selected" : "") + '>' + escapeHTML(p.programa_raw + " · " + p.turma_codigo + (p.inicio ? " · início " + fmtDateShort(p.inicio) : "")) + '</option>';
+    }).join("");
+    if (f.turma == null || !PAINEL.turmas[f.turma]) {
+      // começa pela turma com o histórico mais longo, que dá o gráfico mais útil
+      var best = 0, bestN = -1;
+      PAINEL.turmas.forEach(function (p, i) {
+        var n = p.serie.filter(isNum).length;
+        if (n > bestN) { bestN = n; best = i; }
+      });
+      f.turma = best;
+    }
+    var tsel = PAINEL.turmas[f.turma];
+
+    // total de alunos nas turmas, semana a semana
+    var totalSerie = PAINEL.semanas.map(function (_, i) {
+      var any = false, s = 0;
+      PAINEL.turmas.forEach(function (p) { if (isNum(p.serie[i])) { any = true; s += p.serie[i]; } });
+      return any ? s : null;
+    });
+
+    var verifHTML = (PAINEL.em_verificacao || []).filter(function (v) { return v.serie.some(isNum); }).map(function (v) {
+      return '<div class="box" style="padding:14px 16px"><h2 style="font-size:15px">Em verificação ' + v.rotulo + '</h2><p class="box__sub">Alunos matriculados ainda sem turma alocada — atual: <b>' + (v.atual == null ? "—" : v.atual) + '</b></p>' + lineChartSVG(PAINEL.semanas, v.serie) + '</div>';
+    }).join("");
+
+    var notaRisco = (k.em_risco != null && k.em_risco === cont.risco + cont.atencao)
+      ? '<div class="note">Na planilha, o indicador "Em risco" (' + k.em_risco + ') soma as turmas em <b>risco</b> (' + cont.risco + ') e em <b>atenção</b> (' + cont.atencao + '). Aqui os dois níveis aparecem separados.</div>' : "";
+
+    root.innerHTML =
+      '<div class="box"><div class="box__head"><div><h2>Painel de Ocupação de Turmas</h2>' +
+        '<p class="box__sub">Semana vigente: <b>' + semana + '</b> · fonte: planilha Ocupação de Turmas (abas DASH e EVOLUÇÃO)</p></div></div>' +
+        '<div class="kpis">' + kpiPlan.join("") + '</div></div>' +
+      '<p class="section-label">Situação das turmas — clique para filtrar a tabela</p>' +
+      '<div class="kpis">' + niveisHTML + '</div>' +
+      notaRisco +
+      '<div class="box"><div class="box__head"><div><h2>Status por turma — semana vigente</h2>' +
+        '<p class="box__sub">Clique no cabeçalho para ordenar e numa linha para abrir a turma.</p></div>' +
+        '<div class="row-controls"><select class="select" id="oc-programa" aria-label="Filtrar por programa">' + progOpts + '</select>' +
+        (f.nivel ? '<button type="button" class="btn" id="oc-clear" style="border-color:var(--line)">Limpar filtro</button>' : '') + '</div></div>' +
+        '<div class="legend"><span><i style="background:var(--nivel-risco)"></i>Em risco: alunos ≤ mínimo</span><span><i style="background:var(--nivel-atencao)"></i>Atenção: acima do mínimo e abaixo de 75% do ideal</span><span><i style="background:var(--nivel-saudavel)"></i>Saudável: 75% a 99% do ideal</span><span><i style="background:var(--nivel-lotado)"></i>Lotada: ideal ou mais</span></div>' +
+        '<div class="table-wrap"><table class="data-table"><thead><tr>' + head + '</tr></thead><tbody>' + (list.map(ocRowHTML).join("") || '<tr><td colspan="9" class="empty-state">Nenhuma turma com esse filtro.</td></tr>') + '</tbody></table></div></div>' +
+      '<div class="box"><div class="box__head"><div><h2>Evolução semanal</h2><p class="box__sub">Quantos alunos cada turma tinha em cada semana, com o mínimo e o ideal de referência.</p></div>' +
+        '<select class="select" id="oc-turma" aria-label="Escolher turma">' + selOpts + '</select></div>' +
+        '<div id="oc-chart">' + lineChartSVG(PAINEL.semanas, tsel.serie, tsel.min, tsel.ideal) + '</div></div>' +
+      '<div class="box"><div><h2>Total de alunos nas turmas, semana a semana</h2><p class="box__sub">Soma de todas as turmas com registro na semana.</p></div>' +
+        lineChartSVG(PAINEL.semanas, totalSerie) + '</div>' +
+      verifHTML;
+  }
+
+  document.getElementById("ocupacao-root").addEventListener("click", function (e) {
+    var t = e.target;
+    var kb = t.closest ? t.closest("button[data-nivel]") : null;
+    if (kb) {
+      var n = kb.getAttribute("data-nivel");
+      state.oc.nivel = state.oc.nivel === n ? null : n;
+      renderOcupacao();
+      return;
+    }
+    var sb = t.closest ? t.closest("button[data-sort]") : null;
+    if (sb) {
+      var key = sb.getAttribute("data-sort");
+      if (state.oc.sortKey === key) state.oc.sortDir = -state.oc.sortDir;
+      else { state.oc.sortKey = key; state.oc.sortDir = 1; }
+      renderOcupacao();
+      return;
+    }
+    if (t.id === "oc-clear") { state.oc.nivel = null; renderOcupacao(); return; }
+    var tr = t.closest ? t.closest("tr[data-turma]") : null;
+    if (tr) openPanel(tr.getAttribute("data-turma"));
+  });
+  document.getElementById("ocupacao-root").addEventListener("change", function (e) {
+    if (e.target.id === "oc-programa") { state.oc.programa = e.target.value; renderOcupacao(); }
+    if (e.target.id === "oc-turma") { state.oc.turma = parseInt(e.target.value, 10); renderOcupacao(); }
+  });
+
+  // ======================================================================
+  // Seção Análise (todas as turmas: realizadas, em andamento e futuras)
+  // ======================================================================
+  function anList() {
+    var f = state.an;
+    return DATA.turmas.filter(function (t) {
+      if (f.programa !== "todos" && t.programa !== f.programa) return false;
+      if (f.status === "realizadas" && t.status !== "concluida") return false;
+      if (f.status === "andamento" && t.status !== "andamento") return false;
+      if (f.status === "futuras" && !(t.status === "futura" || t.status === "sem_data")) return false;
+      return true;
+    });
+  }
+
+  function statsOf(list) {
+    var comDados = list.filter(function (t) { return ocupPct(t) !== null; });
+    var pcts = comDados.map(ocupPct);
+    var atuais = comDados.map(function (t) { return t.matriculas.atual; });
+    var maxs = comDados.map(function (t) { return t.matriculas.max; });
+    var dur = list.filter(function (t) { return t.data_inicio && t.data_fim; }).map(function (t) { return daysBetween(t.data_inicio, t.data_fim) + 1; });
+    var enc = list.map(function (t) { return t.total_aulas; });
+    var comMin = comDados.filter(function (t) { return isNum(t.matriculas.min) && t.matriculas.min > 0; });
+    var atingiram = comMin.filter(function (t) { return t.matriculas.atual >= t.matriculas.min; }).length;
+    var niv = { risco: 0, atencao: 0, saudavel: 0, lotado: 0 };
+    comDados.forEach(function (t) { var n = nivelOf(t); if (n) niv[n]++; });
+    var somaAtual = 0;
+    atuais.forEach(function (v) { somaAtual += v; });
+    return {
+      total: list.length,
+      conc: list.filter(function (t) { return t.status === "concluida"; }).length,
+      and: list.filter(function (t) { return t.status === "andamento"; }).length,
+      fut: list.filter(function (t) { return t.status === "futura" || t.status === "sem_data"; }).length,
+      comDados: comDados.length, somaAtual: somaAtual,
+      mediaAtual: avg(atuais), mediaMax: avg(maxs), ocup: avg(pcts),
+      pctMin: comMin.length ? (atingiram / comMin.length) * 100 : null,
+      niv: niv, dur: avg(dur), enc: avg(enc)
+    };
+  }
+
+  function cmpRowHTML(t) {
+    var nivel = nivelOf(t);
+    var m = t.matriculas;
+    var pct = ocupPct(t);
+    var fill = pct == null ? 0 : Math.min(100, pct);
+    var minPct = m && isNum(m.min) && m.max > 0 && m.min > 0 ? Math.min(100, (m.min / m.max) * 100) : null;
+    return '<button type="button" class="cmp__row cmp__row--' + (nivel || "none") + '" data-id="' + escapeHTML(t.id) + '">' +
+      '<div class="cmp__name">' + escapeHTML(t.turma) + '<small>' + (t.data_inicio ? fmtDateBR(t.data_inicio) : "sem data") + ' · ' + (STATUS_LABEL[t.status] || t.status) + '</small></div>' +
+      '<div class="cmp__track"><div class="cmp__fill" style="width:' + fill + '%"></div>' +
+        (minPct !== null ? '<div class="cmp__min" style="left:' + minPct + '%" title="Mínimo: ' + m.min + '"></div>' : '') + '<div class="cmp__ideal" title="Máximo (ideal)"></div></div>' +
+      '<div class="cmp__val">' + (m && isNum(m.atual) ? '<b>' + m.atual + '</b>/' + (m.max != null ? m.max : "—") + (pct != null ? ' · ' + Math.round(pct) + '%' : '') : '<span class="cell-sub">sem dados</span>') + '</div>' +
+    '</button>';
+  }
+
+  function renderAnalise() {
+    var root = document.getElementById("analise-root");
+    var f = state.an;
+    var list = anList();
+    var st = statsOf(list);
+    var progSel = '<option value="todos">Todos os programas</option>' + programs().map(function (p) {
+      return '<option value="' + escapeHTML(p) + '"' + (f.programa === p ? " selected" : "") + '>' + escapeHTML(programLabel(p)) + '</option>';
+    }).join("");
+    var statusTabs = [["todas", "Todas"], ["realizadas", "Já realizadas"], ["andamento", "Em andamento"], ["futuras", "Ainda vão acontecer"]].map(function (s) {
+      return '<button role="tab" data-an-status="' + s[0] + '" aria-selected="' + (f.status === s[0]) + '" type="button">' + s[1] + '</button>';
+    }).join("");
+
+    // Comparativo por programa
+    var rows = programs().map(function (p) {
+      var l = anList().filter(function (t) { return t.programa === p; });
+      if (f.programa !== "todos" && f.programa !== p) return "";
+      if (!l.length) return "";
+      var s = statsOf(l);
+      return '<tr class="is-link" data-prog="' + escapeHTML(p) + '">' +
+        '<td class="cell-prog">' + escapeHTML(p) + '</td>' +
+        '<td class="num">' + s.total + '</td><td class="num">' + s.conc + '</td><td class="num">' + s.and + '</td><td class="num">' + s.fut + '</td>' +
+        '<td class="num">' + s.comDados + '</td>' +
+        '<td class="num">' + fmt1(s.mediaAtual) + '</td><td class="num">' + fmt1(s.mediaMax) + '</td>' +
+        '<td class="num"><b>' + fmtPct(s.ocup) + '</b></td><td class="num">' + fmtPct(s.pctMin) + '</td>' +
+        '<td class="num">' + (s.niv.risco ? '<span class="nivel-pill nivel-pill--risco">' + s.niv.risco + '</span>' : "—") + '</td>' +
+        '<td class="num">' + fmt0(s.dur) + '</td><td class="num">' + fmt1(s.enc) + '</td></tr>';
+    }).join("");
+
+    // Comparação turma a turma
+    var cmpHTML;
+    var withData = list.filter(function (t) { return ocupPct(t) !== null; });
+    if (f.programa === "todos") {
+      cmpHTML = '<p class="box__sub">Escolha um programa no filtro acima para comparar todas as turmas dele lado a lado. Abaixo, os extremos de ocupação entre todos os programas.</p>';
+    } else {
+      var l2 = f.semDados ? list.slice() : withData.slice();
+      var ocultas = list.length - withData.length;
+      if (f.ordem === "ocupacao") l2.sort(function (a, b) { return (ocupPct(b) == null ? -1 : ocupPct(b)) - (ocupPct(a) == null ? -1 : ocupPct(a)); });
+      else l2.sort(function (a, b) { return (a.data_inicio || "9999") < (b.data_inicio || "9999") ? -1 : 1; });
+      cmpHTML = '<div class="row-controls"><span class="box__sub">Ordenar por</span>' +
+        '<div class="tabs" id="an-ordem"><button type="button" data-ordem="data" aria-selected="' + (f.ordem === "data") + '">Data de início</button><button type="button" data-ordem="ocupacao" aria-selected="' + (f.ordem === "ocupacao") + '">Ocupação</button></div>' +
+        (ocultas > 0 ? '<label class="check"><input type="checkbox" id="an-semdados"' + (f.semDados ? " checked" : "") + '> incluir ' + ocultas + ' turma' + (ocultas === 1 ? "" : "s") + ' sem dados de inscritos</label>' : '') + '</div>' +
+        '<div class="legend"><span><i style="background:var(--ink)"></i>marca = mínimo</span><span>borda direita = máximo (ideal)</span></div>' +
+        '<div class="cmp">' + (l2.map(cmpRowHTML).join("") || '<div class="empty-state">Sem turmas neste recorte.</div>') + '</div>';
+    }
+
+    var rank = withData.slice().sort(function (a, b) { return ocupPct(b) - ocupPct(a); });
+    var top = rank.slice(0, 6), bottom = rank.slice(-6).reverse();
+    var rankHTML = withData.length
+      ? '<div class="two-col"><div><div class="panel-section-title">Maiores ocupações</div><div class="cmp">' + top.map(cmpRowHTML).join("") + '</div></div>' +
+        '<div><div class="panel-section-title">Menores ocupações</div><div class="cmp">' + bottom.map(cmpRowHTML).join("") + '</div></div></div>'
+      : '<div class="empty-state">Nenhuma turma deste recorte tem dados de inscritos.</div>';
+
+    var cobertura = st.total ? Math.round((st.comDados / st.total) * 100) : 0;
+
+    root.innerHTML =
+      '<div class="box"><div class="box__head"><div><h2>Análise comparativa de turmas</h2>' +
+        '<p class="box__sub">Todas as turmas do Cronograma — realizadas, em andamento e futuras — comparadas pelos dados de inscritos, duração e calendário.</p></div>' +
+        '<div class="row-controls"><select class="select" id="an-programa" aria-label="Programa">' + progSel + '</select></div></div>' +
+        '<div class="tabs" id="an-status" role="tablist" aria-label="Período das turmas" style="align-self:flex-start">' + statusTabs + '</div>' +
+        '<div class="kpis">' +
+          '<div class="kpi kpi--accent"><span class="kpi__value">' + st.total + '</span><span class="kpi__label">Turmas no recorte</span><span class="kpi__hint">' + st.conc + ' realizadas · ' + st.and + ' em andamento · ' + st.fut + ' futuras</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + st.somaAtual.toLocaleString("pt-BR") + '</span><span class="kpi__label">Alunos inscritos</span><span class="kpi__hint">soma das turmas com dados</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + fmtPct(st.ocup) + '</span><span class="kpi__label">Ocupação média</span><span class="kpi__hint">inscritos ÷ máximo, por turma</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + fmtPct(st.pctMin) + '</span><span class="kpi__label">Atingiram o mínimo</span><span class="kpi__hint">das turmas com mínimo cadastrado</span></div>' +
+          '<div class="kpi"><span class="kpi__value">' + fmt0(st.dur) + '</span><span class="kpi__label">Duração média (dias)</span><span class="kpi__hint">' + fmt1(st.enc) + ' encontros por turma</span></div>' +
+          '<div class="kpi kpi--gold"><span class="kpi__value">' + cobertura + '%</span><span class="kpi__label">Com dados de inscritos</span><span class="kpi__hint">' + st.comDados + ' de ' + st.total + ' turmas</span></div>' +
+        '</div>' +
+        '<div class="kpis">' + NIVEL_ORDER.map(function (n) { return '<div class="kpi kpi--nivel kpi--' + n + '"><span class="kpi__value">' + st.niv[n] + '</span><span class="kpi__label">' + NIVEL_LABEL[n] + '</span></div>'; }).join("") + '</div>' +
+        '<div class="note">Os dados de inscritos vêm da Planilha Master e cobrem as turmas de 2026 em diante; turmas anteriores aparecem na análise de calendário, mas sem número de alunos.</div></div>' +
+
+      '<div class="box"><div><h2>Comparativo por programa</h2><p class="box__sub">Clique em um programa para ver as turmas dele lado a lado.</p></div>' +
+        '<div class="table-wrap"><table class="data-table"><thead><tr><th>Programa</th><th class="num">Turmas</th><th class="num">Realizadas</th><th class="num">Em andamento</th><th class="num">Futuras</th><th class="num">Com dados</th><th class="num">Média de alunos</th><th class="num">Média do máximo</th><th class="num">Ocupação média</th><th class="num">≥ mínimo</th><th class="num">Em risco</th><th class="num">Duração (dias)</th><th class="num">Encontros</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="13" class="empty-state">Sem turmas neste recorte.</td></tr>') + '</tbody></table></div></div>' +
+
+      '<div class="box"><div><h2>Comparação turma a turma</h2></div>' + cmpHTML + '</div>' +
+      '<div class="box"><div><h2>Extremos de ocupação</h2><p class="box__sub">As turmas com maior e menor ocupação do recorte selecionado.</p></div>' + rankHTML + '</div>' +
+      '<div class="box"><div><h2>Calendário: turmas iniciadas por mês</h2><p class="box__sub">Distribuição das aberturas de turma ao longo do tempo, por situação.</p></div>' +
+        '<div class="legend"><span><i style="background:var(--status-concluida)"></i>Realizadas</span><span><i style="background:var(--status-andamento)"></i>Em andamento</span><span><i style="background:var(--status-futura)"></i>Futuras</span></div>' +
+        monthlyChartSVG(list) + '</div>';
+  }
+
+  document.getElementById("analise-root").addEventListener("click", function (e) {
+    var t = e.target;
+    var sb = t.closest ? t.closest("button[data-an-status]") : null;
+    if (sb) { state.an.status = sb.getAttribute("data-an-status"); renderAnalise(); return; }
+    var ob = t.closest ? t.closest("button[data-ordem]") : null;
+    if (ob) { state.an.ordem = ob.getAttribute("data-ordem"); renderAnalise(); return; }
+    var pr = t.closest ? t.closest("tr[data-prog]") : null;
+    if (pr) { state.an.programa = pr.getAttribute("data-prog"); renderAnalise(); window.scrollTo(0, 0); return; }
+    var cr = t.closest ? t.closest("button.cmp__row[data-id]") : null;
+    if (cr) openPanel(cr.getAttribute("data-id"));
+  });
+  document.getElementById("analise-root").addEventListener("change", function (e) {
+    if (e.target.id === "an-programa") { state.an.programa = e.target.value; renderAnalise(); }
+    if (e.target.id === "an-semdados") { state.an.semDados = e.target.checked; renderAnalise(); }
+  });
+
+  // ======================================================================
+  // Exportar resumo da turma como imagem
+  // ======================================================================
   function wrapText(ctx, text, maxWidth) {
     var words = String(text || "").split(" ");
     var lines = [];
@@ -881,19 +1800,18 @@
     return lines;
   }
 
+  var LOGO = new Image();
+  LOGO.src = "/logo-b.png";
+
   function buildCanvas(t) {
     var W = 900;
     var padX = 48;
-    var rowPadY = 14;
-    var contentW = W - padX * 2 - 200; // discipline column width budget
+    var contentW = W - padX * 2 - 200;
     var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
-    // pre-measure with a throwaway canvas
     var dateColW = 92, horColW = 110, facColW = 180;
     var measure = document.createElement("canvas").getContext("2d");
-    measure.font = "13px -apple-system, Segoe UI, sans-serif";
     var dateLinesCache = [], horLinesCache = [], facLinesCache = [];
-    measure.font = "13px Georgia, serif";
     var discLinesCache = [];
     var rowHeights = t.aulas.map(function (a, idx) {
       measure.font = "13px -apple-system, Segoe UI, sans-serif";
@@ -917,15 +1835,17 @@
     var ctx = canvas.getContext("2d");
     ctx.scale(dpr, dpr);
 
-    // palette (light, print-safe)
-    var ink = "#16232c", inkSoft = "#5b6a72", line = "#dfe3e0", accent = "#1f4b4a", accentSoft = "#e2ece9", paper = "#ffffff", gold = "#a9752f";
+    var ink = "#16232c", inkSoft = "#5b6a72", line = "#dfe3e0", accent = "#1f4b4a", accentSoft = "#e2ece9", paper = "#ffffff";
 
     ctx.fillStyle = paper;
     ctx.fillRect(0, 0, W, H);
-
-    // header band
     ctx.fillStyle = accentSoft;
     ctx.fillRect(0, 0, W, 150);
+
+    if (LOGO.complete && LOGO.naturalWidth) {
+      var lh = 54, lw = lh * (LOGO.naturalWidth / LOGO.naturalHeight);
+      ctx.drawImage(LOGO, W - padX - lw, 28, lw, lh);
+    }
 
     ctx.fillStyle = accent;
     ctx.font = "700 13px -apple-system, Segoe UI, sans-serif";
@@ -946,7 +1866,6 @@
     var infoLine = t.programa + (t.modalidade ? "  ·  " + t.modalidade : "") + "  ·  " + range + "  ·  " + t.total_aulas + " encontros";
     ctx.fillText(infoLine, padX, ty + 6);
 
-    // table header
     var colData = padX, colHor = padX + 100, colDisc = padX + 220, colFac = W - padX - 190;
     var y = tableTop;
     ctx.fillStyle = inkSoft;
@@ -985,7 +1904,7 @@
 
     ctx.fillStyle = "#9aa5a0";
     ctx.font = "11px -apple-system, Segoe UI, sans-serif";
-    ctx.fillText("Gerado em " + fmtDateBR(TODAY) + " · Régua de Turmas — Board Academy", padX, H - 26);
+    ctx.fillText("Gerado em " + fmtDateBR(TODAY) + " · Painel de Turmas — Inteligência Comercial · Board Academy", padX, H - 26);
 
     return canvas;
   }
@@ -1024,11 +1943,8 @@
         downloads.save({ filename: filename, data: blob }).then(function () {
           showToast("Imagem salva: " + filename);
         }).catch(function (err) {
-          if (err && err.code === "declined") {
-            showToast("Download cancelado.");
-          } else {
-            showToast("Não foi possível salvar o arquivo agora.");
-          }
+          if (err && err.code === "declined") showToast("Download cancelado.");
+          else showToast("Não foi possível salvar o arquivo agora.");
         }).finally(function () {
           btn.disabled = false; btn.textContent = originalLabel;
         });
@@ -1036,19 +1952,27 @@
     });
   });
 
-  // ---------- init ----------
-  // Data is no longer baked into the page at build time — it's fetched from
-  // /api/dashboard-data, which serves whatever the last self-service upload
-  // (/admin) produced. This keeps the deployed page live without a redeploy.
+  // ======================================================================
+  // Inicialização
+  // ======================================================================
+  // Os dados vêm de /api/dashboard-data (o último processamento das planilhas),
+  // então a página fica atual sem novo deploy.
   function boot(data) {
     DATA = data;
     TODAY = new Date().toISOString().slice(0, 10);
+    PAINEL = DATA.ocupacao_painel || null;
+    PAINEL_BY_TURMA = {};
+    if (PAINEL && PAINEL.turmas) {
+      PAINEL.turmas.forEach(function (p) { if (p.turma_id) PAINEL_BY_TURMA[p.turma_id] = p; });
+    }
     document.getElementById("snapshot-date").textContent = fmtDateLong(DATA.gerado_em.slice(0, 10));
     document.getElementById("fonte-arquivo").textContent = DATA.fonte_arquivo;
-    populateFilters();
+    fillProgramSelect(document.getElementById("filter-programa"));
     renderKPIs();
     renderComunidades();
     render();
+    var h = (location.hash || "").replace("#", "");
+    setView(VIEWS.indexOf(h) !== -1 ? h : "regua", true);
   }
 
   function showLoadError() {
@@ -1056,9 +1980,16 @@
       '<p class="empty-state">Não foi possível carregar os dados agora. Recarregue a página em instantes.</p>';
   }
 
+  window.addEventListener("hashchange", function () {
+    var h = (location.hash || "").replace("#", "");
+    if (DATA && VIEWS.indexOf(h) !== -1 && h !== state.view) setView(h, true);
+  });
+
   fetch("/api/dashboard-data", { cache: "no-store" })
     .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
     .then(boot)
     .catch(showLoadError);
 })();
 </script>
+</body>
+</html>
