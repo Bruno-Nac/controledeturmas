@@ -1,0 +1,39 @@
+# Atualiza o painel a cada hora, buscando as planilhas no SharePoint.
+#
+# Por que aqui e não no Vercel: o plano Hobby do Vercel só aceita agendamento
+# diário (um cron mais frequente faz o deploy falhar). O agendador do GitHub
+# Actions é gratuito, roda de hora em hora e só precisa chamar o endereço
+# /api/sync do painel com a chave CRON_SECRET.
+#
+# Configuração única: em GitHub > Settings > Secrets and variables > Actions,
+# criar o secret CRON_SECRET com o MESMO valor da variável CRON_SECRET do Vercel.
+#
+# O cron do Vercel (vercel.json, 1x por dia) continua ativo como reforço.
+
+name: Atualizar dados do painel
+
+on:
+  schedule:
+    - cron: '7 * * * *' # todo início de hora + 7 min (UTC); evita o horário de pico "em ponto"
+  workflow_dispatch: {} # permite rodar na hora pelo botão "Run workflow"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Chamar /api/sync
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PAINEL_URL: https://controledeturmas-gules.vercel.app
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "Falta o secret CRON_SECRET no GitHub (Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          status=$(curl -sS -o resposta.json -w '%{http_code}' --max-time 150 \
+            -H "Authorization: Bearer $CRON_SECRET" "$PAINEL_URL/api/sync")
+          echo "HTTP $status"
+          cat resposta.json
+          echo
+          [ "$status" = "200" ]
